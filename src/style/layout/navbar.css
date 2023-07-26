@@ -1,0 +1,69 @@
+.navbar {
+    width: 226px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, .1);
+    box-sizing: border-box;
+    border-right: 1px solid #e5e5e5;
+    flex-shrink: 0;
+}
+
+.menu-item {
+    display: flex;
+    height: 44px;
+    width: 100%;
+    align-items: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+}
+
+.menu-item:hover {
+    background-color: #e5e5e5;
+}
+
+.menu-item-focus {
+    background-color: #019160;
+    color: #fff;
+}
+
+.menu-item .menu-icon {
+    margin-left: 16px;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.m-icon {
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.m-icon-dashboard {
+    background-image: url(../../assets/icon/dashboard.png);
+}
+
+.m-icon-report {
+    background-image: url(../../assets/icon/report.png);
+}
+
+.m-icon-sale {
+    background-image: url(../../assets/icon/dashboard.png);
+}
+
+.m-icon-employee {
+    background-image: url(../../assets/icon/dic-employee.png);
+}
+
+.m-icon-setting {
+    background-image: url(../../assets/icon/setting.png);
+}
+
+
+.router-link-active {
+    background-color: #019160;
+    color: #fff;
+    text-decoration: none;
+}   

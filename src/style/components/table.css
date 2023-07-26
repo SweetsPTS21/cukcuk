@@ -1,0 +1,88 @@
+.m-table {
+    position: relative;
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: unset;
+    border: unset;
+    overflow: auto;
+}
+
+.m-table tr {
+    display: table-row;
+    border-bottom: 1px solid #BBBBBB;
+    height: 48px;
+}
+
+.m-table tr td, 
+.m-table tr th {
+    display: table-cell;
+    padding-left: 16px;
+    padding-right: 10px;
+}
+
+.m-table .text-align-left {
+    text-align: left;
+}
+
+.m-table .text-align-right {
+    text-align: right;
+}
+
+.m-table .text-align-center {
+    text-align: center;
+}
+
+.m-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #F5F5F5;
+}
+.m-table tbody {
+    height: 100%;
+}
+
+.m-table tbody tr:hover {
+    background-color: #F5F5F5;
+    cursor: pointer;
+}
+
+.m-table tbody tr.m-row-selected {
+    background-color: #E3F3EE;
+}
+
+.m-table tbody input[type="checkbox"] {
+    display: unset;
+}
+
+.m-table tbody label {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgb(211, 210, 210);
+    border-radius: 4px;
+    cursor: pointer;
+}
+  
+.m-table tbody label:before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+  
+.m-table tbody input[type="checkbox"]:checked + label:before {
+    background-color: #01b075;
+    left: 8px;
+    bottom: 5px;
+    width: 6px;
+    height: 16px;
+    border: solid white;
+    border-width: 0 1px 1px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

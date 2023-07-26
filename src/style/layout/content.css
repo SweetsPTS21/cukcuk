@@ -1,0 +1,55 @@
+.page-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 0 24px;
+    background-color: #fff;
+}
+
+.m-page-header {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+
+.m-page-header .m-page-title {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 20px;
+    font-weight: 500;
+    color: #000;
+    flex-grow: 1;
+}
+
+.m-page-header button {
+    justify-content: flex-end;
+}
+
+.page-content .m-page-toolbar {
+    display: flex;
+    height: 40px;
+}
+
+.page-content .m-page-toolbar .m-page-toolbar-item{
+    display: flex;
+    position: relative;
+}
+
+.page-content .m-page-toolbar .m-page-toolbar-left {
+    display: flex;
+    justify-content: flex-start;
+    flex-grow: 1;
+}
+
+.page-content .m-page-toolbar .m-page-toolbar-left .m-page-toolbar-item{
+    margin-right: 16px;
+    
+}
+
+
+
+
