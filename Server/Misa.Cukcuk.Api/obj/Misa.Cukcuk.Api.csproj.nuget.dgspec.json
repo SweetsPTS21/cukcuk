@@ -1,0 +1,208 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Api\\Misa.Cukcuk.Api.csproj": {}
+  },
+  "projects": {
+    "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Api\\Misa.Cukcuk.Api.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Api\\Misa.Cukcuk.Api.csproj",
+        "projectName": "Misa.Cukcuk.Api",
+        "projectPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Api\\Misa.Cukcuk.Api.csproj",
+        "packagesPath": "C:\\Users\\boixi\\.nuget\\packages\\",
+        "outputPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Api\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\boixi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj": {
+                "projectPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj"
+              },
+              "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Infrastructure\\Misa.Cukcuk.Infrastructure.csproj": {
+                "projectPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Infrastructure\\Misa.Cukcuk.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.AspNet.WebApi.Cors": {
+              "target": "Package",
+              "version": "[5.2.9, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj",
+        "projectName": "Misa.Cukcuk.Core",
+        "projectPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj",
+        "packagesPath": "C:\\Users\\boixi\\.nuget\\packages\\",
+        "outputPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\boixi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Infrastructure\\Misa.Cukcuk.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Infrastructure\\Misa.Cukcuk.Infrastructure.csproj",
+        "projectName": "Misa.Cukcuk.Infrastructure",
+        "projectPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Infrastructure\\Misa.Cukcuk.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\boixi\\.nuget\\packages\\",
+        "outputPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\boixi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj": {
+                "projectPath": "E:\\TTMISA\\CODE\\Misa.Cukcuk.Web\\Misa.Cukcuk.Core\\Misa.Cukcuk.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.143, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.2.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

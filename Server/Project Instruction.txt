@@ -1,0 +1,10 @@
+1. Tạo các project -> referece đến các project liên quan
+2. Hoàn thiện các Project
+- Core: Entities, Interfaces, Services
+- Infrastructure: Repository class
+- API: Controller
+3. Xử lý Dependencu Injection (DI) trong file program.cs
+
+Chú ý:
+ - Các class không được gọi trực tiếp đến các phương thức của nhau
+ 

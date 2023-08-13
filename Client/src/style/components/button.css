@@ -1,0 +1,84 @@
+.m-btn {
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 4px;
+    text-align: center;
+    border: none;
+    background-color: #019160;
+    color: #fff;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.m-btn:hover {
+    background-color: #2FBE8F;
+}
+
+.m-btn:focus {
+    outline: none;
+}
+
+.m-btn:active {
+    background-color: #01B075;
+}
+
+.m-btn-icon {
+    background-position: 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    padding-left: 40px;
+    padding-right: 16px;
+}
+
+.m-btn-icon-add {
+    background-image: url("../../assets/icon/add.png");
+}
+
+.m-btn-icon-save {
+    background-image: url("../../assets/icon/save-regular.svg");
+}
+
+.m-btn-refresh {
+    width: 50px;
+    height: 40px;
+    background-image: url("../../assets/icon/refresh.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    text-align: center;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    margin: unset;
+}
+
+.m-btn-cancel {
+    background-color: #eaebef;
+    color: #000;
+}
+
+.m-btn-cancel:hover {
+    background-color: #dfe0e4;
+}
+
+.m-btn-save {
+    padding: 12px 24px;
+    text-align: left;
+}
+
+.m-btn-save i {
+    font-size: 16px;
+    margin-right: 16px;
+}
+
+.m-btn-modal {
+    height: 36px;
+}
+
+.m-btn-detele {
+    background-color: #e74c3c;
+}
+
+.m-btn-detele:hover {
+    background-color: #c0392b;
+}

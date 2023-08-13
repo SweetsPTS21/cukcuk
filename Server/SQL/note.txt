@@ -1,0 +1,24 @@
+B1: Xác định tên bảng: Employee
+B2: Xác định các cột dữ liệu
+	- Tên cột: Danh từ, số ít, đối với cột dữ liệu quan trọng phải có
+	thêm tiền tố là tên bảng
+	- Kiểu dữ liệu: Là chuỗi số hay ngày tháng
+	- Độ dài, độ lớn dữ liệu
+	- Có giá trị mặc định hay không
+	- Có bắt buộc nhập hay không
+	
+	- Bắt buộc phải có khóa chính: EmployeeId - INT/CHAR(36)
+B3: Xác định các mối quan hệ với các bảng khác
+	- 1-1 hay 1-n  hay n-n-n
+	- Khóa chính/ngoại khóa
+B4: Đánh index cho các cột dữ liệu
+
+
+Convention: Id: CHAR(36)
+			Code: VARCHAR(20)
+			tên người, chức danh: VARCHAR(100)
+			Các tên khác(địa chỉ, ...): VARCHAR(255)
+			Ngày tháng: DATE
+			Dữ liệu dạng combobox: Nếu có giới hạn sl bản ghi(giới tính): INT
+									Nếu dl không xác định giới hạn: Thêm 1 bảng dl liên kết với bảng 
+									hiện tại qua khóa ngoại

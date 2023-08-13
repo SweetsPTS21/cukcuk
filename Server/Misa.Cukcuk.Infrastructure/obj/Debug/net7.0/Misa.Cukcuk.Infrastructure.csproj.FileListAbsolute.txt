@@ -1,0 +1,15 @@
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\bin\Debug\net7.0\Misa.Cukcuk.Infrastructure.deps.json
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\bin\Debug\net7.0\Misa.Cukcuk.Infrastructure.dll
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\bin\Debug\net7.0\Misa.Cukcuk.Infrastructure.pdb
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\bin\Debug\net7.0\Misa.Cukcuk.Core.dll
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\bin\Debug\net7.0\Misa.Cukcuk.Core.pdb
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.csproj.AssemblyReference.cache
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.AssemblyInfoInputs.cache
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.AssemblyInfo.cs
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.csproj.CoreCompileInputs.cache
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.csproj.CopyComplete
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.dll
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\refint\Misa.Cukcuk.Infrastructure.dll
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\Misa.Cukcuk.Infrastructure.pdb
+E:\TTMISA\CODE\Misa.Cukcuk.Web\Misa.Cukcuk.Infrastructure\obj\Debug\net7.0\ref\Misa.Cukcuk.Infrastructure.dll
