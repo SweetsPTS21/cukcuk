@@ -17,18 +17,24 @@
                         type="text"
                         class="m-input m-input-icon m-icon-search m-icon-16"
                         placeholder="Tìm kiếm theo Mã, Tên hoặc Số điện thoại"
+                        v-model="searchEmployee"
                     />
                 </div>
                 <div class="m-page-toolbar-item">
-                    <select name="" id="" class="m-select-box m-box-custom">
+                    <select
+                        name=""
+                        id=""
+                        class="m-select-box m-box-custom"
+                        @change="filterDepartment($event.target.value)"
+                    >
                         <option value="">Tất cả phòng ban</option>
-                        <option value="1469aa1d-2c2a-11ee-9c96-00d861883544">
+                        <option value="14697e7f-2c2a-11ee-9c96-00d861883544">
                             Phòng nhân sự
                         </option>
                         <option value="1468ce1f-2c2a-11ee-9c96-00d861883544">
                             Phòng Hành Chính
                         </option>
-                        <option value="14697e7f-2c2a-11ee-9c96-00d861883544">
+                        <option value="1469aa1d-2c2a-11ee-9c96-00d861883544">
                             Phòng Công Nghệ Thông Tin
                         </option>
                         <option value="1469e5f4-2c2a-11ee-9c96-00d861883544">
@@ -40,7 +46,12 @@
                     </div>
                 </div>
                 <div class="m-page-toolbar-item">
-                    <select name="" id="" class="m-select-box m-box-custom">
+                    <select
+                        name=""
+                        id=""
+                        class="m-select-box m-box-custom"
+                        @change="filterPosition($event.target.value)"
+                    >
                         <option value="">Tất cả</option>
                         <option value="d770ef72-2c29-11ee-9c96-00d861883544">
                             Trưởng Phòng
@@ -158,7 +169,7 @@
                     <!-- Dữ liệu lấy từ API -->
                     <!-- Truyền vào DOM thông qua jquery -->
                     <tr
-                        v-for="employee in employeeList"
+                        v-for="employee in filterList"
                         :key="employee.EmployeeId"
                         @dblclick="rowOnDblClick(employee)"
                     >
@@ -362,7 +373,7 @@ export default {
                     case 2:
                         value = "Đang thử việc";
                         break;
-                    case 3: 
+                    case 3:
                         value = "Đã nghỉ hưu";
                         break;
                     default:
@@ -387,10 +398,47 @@ export default {
                     console.log(err);
                 });
         },
+        /**
+         * Lọc dữ liệu theo tên phòng ban
+         * @param {String} value
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        filterDepartment(value) {
+            this.searchDepartment = value;
+        },
+        /**
+         * Lọc dữ liệu theo tên chức vụ
+         * @param {String} value
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        filterPosition(value) {
+            this.searchPosition = value;
+        },
     },
     watch: {},
+    computed: {
+        filterList() {
+            let key = this.searchEmployee.toLowerCase();
+
+            return this.employeeList.filter(
+                (employee) =>
+                    employee.FullName.toLowerCase().includes(key) &&
+                    employee.DepartmentId.includes(this.searchDepartment) &&
+                    employee.PositionId.includes(this.searchPosition) ||
+                    employee.EmployeeCode.toLowerCase().includes(key) &&
+                    employee.DepartmentId.includes(this.searchDepartment) &&
+                    employee.PositionId.includes(this.searchPosition) ||
+                    employee.PhoneNumber.toLowerCase().includes(key) &&
+                    employee.DepartmentId.includes(this.searchDepartment) &&
+                    employee.PositionId.includes(this.searchPosition)
+            );
+        },
+    },
     data() {
         return {
+            searchEmployee: "",
+            searchDepartment: "",
+            searchPosition: "",
             employeeList: [],
             isShowDialog: false,
             employeeSelectedId: null,

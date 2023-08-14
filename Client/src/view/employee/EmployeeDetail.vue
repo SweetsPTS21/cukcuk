@@ -58,6 +58,8 @@
                                 value=""
                                 class="m-select-box"
                                 id="cbGender"
+                                ref="cbGender"
+                                @change="genderOnChange(employee.Gender)"
                                 v-model="employee.Gender"
                             >
                                 <option value="0">Nam</option>
@@ -137,26 +139,11 @@
                                 v-model="employee.PositionId"
                                 class="m-select-box"
                             >
-                                <option value="">Tất cả</option>
                                 <option
-                                    value="d770ef72-2c29-11ee-9c96-00d861883544"
+                                    v-for="position in positions"
+                                    :value="position.PositionId"
                                 >
-                                    Trưởng Phòng
-                                </option>
-                                <option
-                                    value="b03276b9-2c29-11ee-9c96-00d861883544"
-                                >
-                                    Nhân Viên
-                                </option>
-                                <option
-                                    value="c1168093-2c29-11ee-9c96-00d861883544"
-                                >
-                                    Trưởng Nhóm
-                                </option>
-                                <option
-                                    value="d7716916-2c29-11ee-9c96-00d861883544"
-                                >
-                                    Giám đốc
+                                    {{ position.PositionName }}
                                 </option>
                             </select>
                         </div>
@@ -167,27 +154,17 @@
                                 id="cbDepartmentName"
                                 v-model="employee.DepartmentId"
                                 class="m-select-box"
-                            >
-                                <option value="">Tất cả phòng ban</option>
+                            >                          
                                 <option
-                                    value="1469aa1d-2c2a-11ee-9c96-00d861883544"
+                                    v-for="department in departments"
+                                    :key="department.DepartmentId"
+                                    :value="department.DepartmentId"
+                                    :selected="
+                                        department.DepartmentId ==
+                                        defaultDepartmentId
+                                    "
                                 >
-                                    Phòng nhân sự
-                                </option>
-                                <option
-                                    value="1468ce1f-2c2a-11ee-9c96-00d861883544"
-                                >
-                                    Phòng Hành Chính
-                                </option>
-                                <option
-                                    value="14697e7f-2c2a-11ee-9c96-00d861883544"
-                                >
-                                    Phòng Công Nghệ Thông Tin
-                                </option>
-                                <option
-                                    value="1469e5f4-2c2a-11ee-9c96-00d861883544"
-                                >
-                                    Phòng Kế Toán
+                                    {{ department.DepartmentName }}
                                 </option>
                             </select>
                         </div>
@@ -284,7 +261,10 @@ export default {
             });
         }
     },
-    created() {},
+    created() {
+        this.getDepartment();
+        this.getPosition();
+    },
     beforeUpdate() {
         this.employee.DateOfBirth = this.formatDate(this.employee.DateOfBirth);
         this.employee.IdentityDate = this.formatDate(
@@ -328,11 +308,9 @@ export default {
         //Những hàm xử lý sự kiện
         submitForm() {
             if (this.v$.$errors.length > 0) {
-                for (const error of this.v$.$errors) {
-                    alert(error.$message);
-                }
+                alert(this.v$.$errors[0].$message);
             } else {
-                this.employee.Gender = parseInt(this.employee.Gender, 10);
+                //this.employee.Gender = parseInt(this.employee.Gender, 10);
                 this.saveData();
             }
             console.log(this.v$.$errors);
@@ -352,6 +330,12 @@ export default {
         },
         showDialogConfirmDelete(value) {
             this.isDelete = value;
+        },
+        genderOnChange(value) {
+            if (typeof value == "string") {
+                value = parseInt(value, 10);
+            }
+            this.employee.Gender = value;
         },
         formatDate(value) {
             value = new Date(value);
@@ -375,10 +359,30 @@ export default {
                 this.updateEmployee();
             }
         },
+        getDepartment() {
+            axios
+                .get("https://localhost:7159/api/v1/Department")
+                .then((res) => {
+                    this.departments = res.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        getPosition() {
+            axios
+                .get("https://localhost:7159/api/Position")
+                .then((res) => {
+                    this.positions = res.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
         addNewEmployee() {
             axios
                 .post(
-                    "https://localhost:7159/api/v1/Employee",
+                    "https://localhost:7159/api/v1/Employees",
                     JSON.stringify(this.employee),
                     {
                         headers: {
@@ -488,7 +492,7 @@ export default {
                         this.employee = {};
                         axios
                             .get(
-                                "https://cukcuk.manhnv.net/api/v1/Employees/NewEmployeeCode"
+                                "https://cukcuk.manhnv.net/api/v1/Employee/NewEmployeeCode"
                             )
                             .then((res) => {
                                 this.employee.EmployeeCode = res.data;
@@ -500,23 +504,30 @@ export default {
             }
         },
     },
+    computed: {},
     data() {
         return {
             employee: {
                 EmployeeCode: "",
                 FullName: "",
                 DateOfBirth: "",
-                Gender: "",
+                Gender: 0,
                 Email: "",
                 PhoneNumber: "",
+                DepartmentId: "",
+                PositionId: "",
                 PositionName: "",
                 DepartmentName: "",
                 IdentityNumber: "",
                 IdentityDate: "",
                 IdentityPlace: "",
                 JoinDate: "",
+                WorkStatus: 0,
                 PersonalTaxCode: "",
             },
+            departments: [],
+            positions: [],
+            defaultDepartmentId: "1468ce1f-2c2a-11ee-9c96-00d861883544",
             v$: useVuelidate(),
             isDelete: false,
             isWarning: false,
