@@ -14,6 +14,5 @@ namespace Misa.Cukcuk.Core.Interface.Infrastructure
         int Insert(MISAEntity entity);
         int Update(MISAEntity entity, Guid entityId);
         int Delete(Guid entityId);
-
     }
 }

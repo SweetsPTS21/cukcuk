@@ -90,3 +90,46 @@
     color: #3165a0;
 }
 
+.m-toast-box .m-toast-item.m-toast-info,
+.m-toast-box .m-toast-item.m-toast-success,
+.m-toast-box .m-toast-item.m-toast-warning,
+.m-toast-box .m-toast-item.m-toast-error {
+    display: none;
+}
+.is-show-toast {
+    display: flex !important;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; /* Maintain the final state of the animation */
+}
+
+/* Define the fade-in animation */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Define the fade-out animation */
+@keyframes fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+}
+
+.m-toast-box.fade-in {
+    animation-name: fade-in;
+}
+
+.m-toast-box.fade-out {
+    animation-name: fade-out;
+}

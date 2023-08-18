@@ -1,12 +1,12 @@
 <template>
     <div
         class="m-popup-dialog m-dialog-warning"
-        :class="{ isShowDialog: isShowWarning }"
+        :class="{ isShowDialog: dialogType == Enum.POPUP_TYPE.WARNING }"
     >
         <div class="m-dialog-content">
             <div class="m-dialog-header">
-                <div class="m-dialog-title">Đóng form thông tin chung</div>
-                <div class="m-dialog-close">
+                <div class="m-dialog-title">Chú ý</div>
+                <div class="m-dialog-close" @click="btnCloseOnClick">
                     <i class="fas fa-times"></i>
                 </div>
             </div>
@@ -15,14 +15,15 @@
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div class="m-dialog-text">
-                    Bạn có chắc chắn muốn đóng form thông tin chung?
+                    {{ message }}
                 </div>
             </div>
             <div class="m-dialog-footer">
-                <button class="m-btn m-dialog-button-negative" id="">
-                    Tiếp tục nhập
-                </button>
-                <button class="m-btn m-dialog-button-positive" id="">
+                <button
+                    class="m-btn m-dialog-button-negative"
+                    id=""
+                    @click="btnCloseOnClick"
+                >
                     Đóng
                 </button>
             </div>
@@ -30,13 +31,12 @@
     </div>
     <div
         class="m-popup-dialog m-dialog-delete"
-        :class="{ isShowDialog: isShowDelete }"
+        :class="{ isShowDialog: dialogType == Enum.POPUP_TYPE.DELETE }"
     >
         <div class="m-dialog-content">
             <div class="m-dialog-header">
-                <div class="m-dialog-title">Xoá bản ghi A</div>
-                <div class="m-dialog-close"
-                @click="btnCloseOnClick">
+                <div class="m-dialog-title">Xoá</div>
+                <div class="m-dialog-close" @click="btnCloseOnClick">
                     <i class="fas fa-times"></i>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div class="m-dialog-text">
-                    Bạn có chắc chắn muốn xóa bản ghi A
+                    {{ message }}
                 </div>
             </div>
             <div class="m-dialog-footer">
@@ -66,7 +66,7 @@
     </div>
     <div
         class="m-popup-dialog m-dialog-info"
-        :class="{ isShowDialog: isShowInfo }"
+        :class="{ isShowDialog: dialogType == Enum.POPUP_TYPE.INFO }"
     >
         <div class="m-dialog-content">
             <div class="m-dialog-header">
@@ -77,8 +77,7 @@
             </div>
             <div class="m-dialog-body">
                 <div class="m-dialog-text">
-                    Hiện bạn chưa thiết lập USB Token. Vui lòng thiết lập kết
-                    nối với USB Token để ký nộp các hồ sơ
+                    {{ message }}
                 </div>
             </div>
             <div class="m-dialog-footer">
@@ -90,24 +89,22 @@
     </div>
 </template>
 <script>
+import Enum from "@/scripts/enum";
+
 export default {
     name: "ThePopup",
     data() {
         return {};
     },
-    emits: ['confirmDelete', 'isShowDialog'],
+    emits: ["confirmDelete", "closePopup"],
     props: {
-        isShowWarning: {
-            type: Boolean,
-            default: false,
+        message: {
+            type: String,
+            default: "",
         },
-        isShowDelete: {
-            type: Boolean,
-            default: false,
-        },
-        isShowInfo: {
-            type: Boolean,
-            default: false,
+        dialogType: {
+            type: Number,
+            default: Enum.POPUP_TYPE.INFO,
         },
     },
     methods: {
@@ -115,8 +112,13 @@ export default {
             this.$emit("confirmDelete");
         },
         btnCloseOnClick() {
-            this.$emit("isShowDialog", false);
-        }
+            this.$emit("closePopup");
+        },
     },
+    data() {
+        return {
+            Enum,
+        };
+    }
 };
 </script>

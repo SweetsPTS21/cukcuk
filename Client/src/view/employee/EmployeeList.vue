@@ -17,7 +17,7 @@
                         type="text"
                         class="m-input m-input-icon m-icon-search m-icon-16"
                         placeholder="Tìm kiếm theo Mã, Tên hoặc Số điện thoại"
-                        v-model="searchEmployee"
+                        v-model="filterObj.Search"
                     />
                 </div>
                 <div class="m-page-toolbar-item">
@@ -130,7 +130,7 @@
                         <th
                             class="text-align-left"
                             fieldName="Email"
-                            style="width: 50px"
+                            style="width: 50px; overflow-wrap: break-word"
                         >
                             Email
                         </th>
@@ -166,10 +166,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dữ liệu lấy từ API -->
-                    <!-- Truyền vào DOM thông qua jquery -->
                     <tr
-                        v-for="employee in filterList"
+                        v-for="employee in employeeList"
                         :key="employee.EmployeeId"
                         @dblclick="rowOnDblClick(employee)"
                     >
@@ -178,10 +176,10 @@
                         </td>
                         <td class="text-align-left">{{ employee.FullName }}</td>
                         <td class="text-align-center">
-                            {{ formatGender(employee.Gender) }}
+                            {{ formatData(employee.Gender, Enum.FORMAT_TYPE.GENDER) }}
                         </td>
                         <td class="text-align-center">
-                            {{ formatDate(employee.DateOfBirth) }}
+                            {{ formatData(employee.DateOfBirth, Enum.FORMAT_TYPE.DATE) }}
                         </td>
                         <td class="text-align-left">
                             {{ employee.PhoneNumber }}
@@ -194,33 +192,62 @@
                             {{ employee.DepartmentName }}
                         </td>
                         <td class="text-align-right">
-                            {{ formatSalary(employee.Salary) }}
+                            {{ formatData(employee.Salary, Enum.FORMAT_TYPE.MONEY) }}
                         </td>
                         <td class="text-align-left">
-                            {{ formatWorkStatus(employee.WorkStatus) }}
+                            {{ formatData(employee.WorkStatus, Enum.FORMAT_TYPE.WORK_STATUS) }}
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="m-paging">
-                <div class="m-paging-left">Hiển thị 1-100 lao động</div>
+                <div class="m-paging-left">Hiển thị 1-10 nhân viên</div>
                 <div class="m-paging-center">
                     <button class="m-btn-first"></button>
-                    <button class="m-btn-prev"></button>
+                    <button
+                        class="m-btn-prev"
+                        @click="pageOnClick(this.filterObj.Page - 1)"
+                    ></button>
                     <div class="m-page-number-group">
                         <button
-                            class="m-page-number m-page-1 m-page-number-selected"
+                            class="m-page-number m-page-1"
+                            :class="{
+                                'm-page-number-selected': filterObj.Page == 1,
+                            }"
+                            @click="pageOnClick(1)"
                         >
                             1
                         </button>
-                        <button class="m-page-number m-page-2">2</button>
-                        <button class="m-page-number m-page-3">3</button>
+                        <button
+                            class="m-page-number m-page-2"
+                            :class="{
+                                'm-page-number-selected': filterObj.Page == 2,
+                            }"
+                            @click="pageOnClick(2)"
+                        >
+                            2
+                        </button>
+                        <button
+                            class="m-page-number m-page-3"
+                            :class="{
+                                'm-page-number-selected': filterObj.Page == 3,
+                            }"
+                            @click="pageOnClick(3)"
+                        >
+                            3
+                        </button>
                     </div>
-                    <button class="m-btn-next"></button>
+                    <button
+                        class="m-btn-next"
+                        @click="pageOnClick(this.filterObj.Page + 1)"
+                    ></button>
                     <button class="m-btn-last"></button>
                 </div>
                 <div class="m-paging-right">
-                    <select class="m-select-box m-box-custom">
+                    <select
+                        class="m-select-box m-box-custom"
+                        v-model="filterObj.PageSize"
+                    >
                         <option value="10">10 nhân viên/trang</option>
                         <option value="20">20 nhân viên/trang</option>
                         <option value="50">50 nhân viên/trang</option>
@@ -236,10 +263,18 @@
         :employeeSelected="employeeSelected"
         :employeeSelectedId="employeeSelectedId"
         :isShow="isShowDialog"
+        v-if="isShowDialog"
         @isShowDialog="showDialogEmployeeDetail"
         :formDetailMode="formDetailMode"
         @childMethodCall="loadData"
+        @update:show-toast="showToast"
     />
+    <TheToast
+        :showToast="isShowToast"
+        @closeToast="closeToast"
+        :message="toastMessage"
+        :messageType="toastType"
+    ></TheToast>
     <div class="m-loading" :class="{ isLoading: isLoading }">
         <div class="m-loading-icon"></div>
     </div>
@@ -249,10 +284,15 @@
 <script>
 import axios from "axios";
 import EmployeeDetail from "./EmployeeDetail.vue";
+import TheToast from "@/components/layout/TheToast.vue";
+import Enum from "@/scripts/enum";
+import Resource from "@/scripts/resource";
+import Default from "@/scripts/default";
+import CommonJS from "@/scripts/common";
 export default {
     name: "EmployeeList",
     components: {
-        EmployeeDetail,
+        EmployeeDetail, TheToast,
     },
     //Vòng đời của Vue component
     beforeCreate() {
@@ -267,7 +307,6 @@ export default {
         //Gọi API để lấy dữ liệu - Dùng axios (giống ajax)
         this.isLoading = true;
         this.loadData();
-        this.formatDate();
     },
     beforeMount() {
         //Có thể truy cập data, event, method ở đây
@@ -294,100 +333,83 @@ export default {
         //Ít khi dùng
     },
     methods: {
+        /**
+         * Hàm xử lý khi click vào nút thêm mới
+         * @returns
+         * CreatedBy: PTSON (08/03/2023)
+         */
         btnAddOnClick() {
             this.showDialogEmployeeDetail(true);
-            this.employeeSelected = {};
             this.employeeSelectedId = null;
-            this.formDetailMode = 1;
+            this.employeeSelected = this.employeeDefault;
+            this.formDetailMode = Enum.FORM_MODE.ADD;
         },
+        /**
+         * Hàm xử lý khi double click vào 1 dòng trong bảng
+         * @param {Employee} employee
+         * CreatedBy: PTSON (08/03/2023)
+         */
         rowOnDblClick(employee) {
             this.employeeSelected = employee;
+
+            //Format lại ngày tháng
+            this.employeeSelected.DateOfBirth = this.formatData(
+                employee.DateOfBirth,
+                Enum.FORMAT_TYPE.DATE
+            );
+
+            this.employeeSelected.IdentityDate = this.formatData(
+                employee.IdentityDate,
+                Enum.FORMAT_TYPE.DATE
+            );
+
+            this.employeeSelected.JoinDate = this.formatData(
+                employee.JoinDate,
+                Enum.FORMAT_TYPE.DATE
+            );
+
             this.employeeSelectedId = employee.EmployeeId;
             this.showDialogEmployeeDetail(true);
-            this.formDetailMode = 2;
+            this.formDetailMode = Enum.FORM_MODE.UPDATE;
         },
+        /**
+         * Hàm xử lý khi click vào nút refresh
+         * CreatedBy: PTSON (08/03/2023)
+         */
         btnRefreshOnClick() {
             this.loadData();
         },
         //Hiển thị dialog chi tiết nhân viên
+        /**
+         * Hiển thị dialog chi tiết nhân viên
+         * @param {Boolean} isShow
+         * CreatedBy: PTSON (08/14/2023)
+         */
         showDialogEmployeeDetail(isShow) {
             this.isShowDialog = isShow;
         },
-        formatDate(value) {
-            //value != null && value != undefined && value != ""
-            value = new Date(value);
-            //Lấy ra ngày
-            let day = value.getDate();
-            day = day < 10 ? `0${day}` : day;
-            //Lấy ra tháng + 1 vì tháng trong JS tính từ 0
-            let month = value.getMonth() + 1;
-            month = month < 10 ? `0${month}` : month;
-            //Lấy ra năm
-            let year = value.getFullYear();
-            //Định dạng ngày tháng năm
-            value = `${year}-${month}-${day}`;
-            return value;
+        /**
+         * Định dạng dữ liệu theo kiểu
+         * @param {String} value
+         * @param {String} type
+         * @returns {String}
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        formatData(value, type) {
+            return CommonJS.formatData(value, type);
         },
-        formatSalary(value) {
-            try {
-                if (value) {
-                    value = new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                    }).format(value);
-                }
-                return value;
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        formatGender(value) {
-            try {
-                switch (value) {
-                    case 0:
-                        value = "Nam";
-                        break;
-                    case 1:
-                        value = "Nữ";
-                        break;
-                    case 2:
-                        value = "Khác";
-                        break;
-                    default:
-                        break;
-                }
-                return value;
-            } catch (error) {
-                console.log(error);
-            }
-        },
-        formatWorkStatus(value) {
-            try {
-                switch (value) {
-                    case 0:
-                        value = "Đang làm việc";
-                        break;
-                    case 1:
-                        value = "Đã nghỉ việc";
-                        break;
-                    case 2:
-                        value = "Đang thử việc";
-                        break;
-                    case 3:
-                        value = "Đã nghỉ hưu";
-                        break;
-                    default:
-                        break;
-                }
-                return value;
-            } catch (error) {
-                console.log(error);
-            }
-        },
+        /**
+         * Lấy dữ liệu tất cả nhân viên
+         * @returns
+         * CreatedBy: PTSON (08/14/2023)
+         */
         loadData() {
             this.isLoading = true;
             axios
-                .get("https://localhost:7159/api/v1/Employee")
+                .post(
+                    `https://localhost:7159/api/v1/Employee/filter`,
+                    this.filterObj
+                )
                 .then((res) => {
                     this.employeeList = res.data;
                     this.isLoading = false;
@@ -399,12 +421,31 @@ export default {
                 });
         },
         /**
+         * Lấy dữ liệu phân trang
+         * @returns {Array}
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        getPageingData() {
+            let start = (this.filterObj.Page - 1) * this.filterObj.PageSize;
+            let end = start + this.filterObj.PageSize;
+            return this.employeeList.slice(start, end);
+        },
+        /**
+         * Xử lý sự kiện khi click vào phân trang
+         * @param {Number} Page
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        pageOnClick(page) {
+            if (page < 1 || page > this.filterObj.TotalPage) return;
+            this.filterObj.Page = page;
+        },
+        /**
          * Lọc dữ liệu theo tên phòng ban
          * @param {String} value
          * CreatedBy: PTSON (08/14/2023)
          */
         filterDepartment(value) {
-            this.searchDepartment = value;
+            this.filterObj.DepartmentId = value;
         },
         /**
          * Lọc dữ liệu theo tên chức vụ
@@ -412,39 +453,81 @@ export default {
          * CreatedBy: PTSON (08/14/2023)
          */
         filterPosition(value) {
-            this.searchPosition = value;
+            this.filterObj.PositionId = value;
+        },
+        /**
+         * Show toast thông báo
+         * @param {String} message
+         * @param {String} messageType
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        showToast(message, messageType) {
+            this.isShowToast = true;
+            this.toastMessage = message;
+            this.toastType = messageType;
+        },
+        /**
+         * Ẩn toast thông báo
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        closeToast() {
+            this.isShowToast = false;
         },
     },
-    watch: {},
+    watch: {
+        "filterObj.PageSize": function (oldValue, newValue) {
+            this.loadData();
+        },
+        "filterObj.Page"() {
+            this.loadData();
+        },
+        "filterObj.Search"() {
+            this.loadData();
+        },
+        "filterObj.DepartmentId"() {
+            this.loadData();
+        },
+        "filterObj.PositionId"() {
+            this.loadData();
+        },
+    },
     computed: {
         filterList() {
             let key = this.searchEmployee.toLowerCase();
 
             return this.employeeList.filter(
                 (employee) =>
-                    employee.FullName.toLowerCase().includes(key) &&
-                    employee.DepartmentId.includes(this.searchDepartment) &&
-                    employee.PositionId.includes(this.searchPosition) ||
-                    employee.EmployeeCode.toLowerCase().includes(key) &&
-                    employee.DepartmentId.includes(this.searchDepartment) &&
-                    employee.PositionId.includes(this.searchPosition) ||
-                    employee.PhoneNumber.toLowerCase().includes(key) &&
-                    employee.DepartmentId.includes(this.searchDepartment) &&
-                    employee.PositionId.includes(this.searchPosition)
+                    (employee.FullName.toLowerCase().includes(key) &&
+                        employee.DepartmentId.includes(this.searchDepartment) &&
+                        employee.PositionId.includes(this.searchPosition)) ||
+                    (employee.EmployeeCode.toLowerCase().includes(key) &&
+                        employee.DepartmentId.includes(this.searchDepartment) &&
+                        employee.PositionId.includes(this.searchPosition)) ||
+                    (employee.PhoneNumber.toLowerCase().includes(key) &&
+                        employee.DepartmentId.includes(this.searchDepartment) &&
+                        employee.PositionId.includes(this.searchPosition))
             );
         },
     },
     data() {
         return {
-            searchEmployee: "",
-            searchDepartment: "",
-            searchPosition: "",
+            filterObj: {
+                ...Default.Filter,
+            },
             employeeList: [],
             isShowDialog: false,
             employeeSelectedId: null,
             employeeSelected: {},
+            employeeDefault: {
+                ...Default.Employee,
+            },
             isLoading: false,
-            formDetailMode: 0,
+            formDetailMode: Enum.FORM_MODE.ADD,
+            isShowToast: false,
+            toastMessage: "",
+            toastType: 0,
+            Enum,
+            Resource,
         };
     },
 };

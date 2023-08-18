@@ -5,17 +5,21 @@
                 <i class="fas fa-times"></i>
             </div>
             <div class="m-add-modal-header">
-                <div class="m-modal-title">THÔNG TIN NHÂN VIÊN</div>
+                <div class="m-modal-title">
+                    {{ this.language.TITLE.FORM_ADD }}
+                </div>
             </div>
             <div class="m-add-modal-body">
                 <div class="m-add-modal-avatar">
                     <div class="avatar-img"></div>
                     <div class="avatar-info">
-                        Vui lòng chọn ảnh có định dạng .jpg .jpeg .png .gif
+                        {{ this.language.TITLE.AVATAR_INFO }}
                     </div>
                 </div>
                 <div class="m-add-modal-info">
-                    <div class="info-title">A. THÔNG TIN CHUNG</div>
+                    <div class="info-title">
+                        {{ this.language.TITLE.GENERAL_INFO }}
+                    </div>
                     <div class="general-info">
                         <div class="info-item">
                             <p>Mã nhân viên(*)</p>
@@ -24,6 +28,7 @@
                                 class="m-input m-modal-input"
                                 ref="txtEmployeeCode"
                                 v-model="employee.EmployeeCode"
+                                @blur="v$.employee.EmployeeCode.$touch()"
                                 placeholder="Nhập mã nhân viên"
                                 :class="{
                                     'm-input-error':
@@ -62,9 +67,9 @@
                                 @change="genderOnChange(employee.Gender)"
                                 v-model="employee.Gender"
                             >
-                                <option value="0">Nam</option>
-                                <option value="1">Nữ</option>
-                                <option value="2">Khác</option>
+                                <option :value="Enum.GENDER.MALE">Nam</option>
+                                <option :value="Enum.GENDER.FEMALE">Nữ</option>
+                                <option :value="Enum.GENDER.OTHER">Khác</option>
                             </select>
                         </div>
                         <div class="info-item">
@@ -73,6 +78,7 @@
                                 type="text"
                                 class="m-input m-modal-input"
                                 v-model="employee.IdentityNumber"
+                                @blur="v$.employee.IdentityNumber.$touch()"
                                 :class="{
                                     'm-input-error':
                                         v$.employee.IdentityNumber.$error,
@@ -108,6 +114,7 @@
                                 :class="{
                                     'm-input-error': v$.employee.Email.$error,
                                 }"
+                                @blur="v$.employee.Email.$touch()"
                                 v-model="employee.Email"
                                 placeholder="Nhập Email"
                                 required
@@ -124,12 +131,15 @@
                                     'm-input-error':
                                         v$.employee.PhoneNumber.$error,
                                 }"
+                                @blur="v$.employee.PhoneNumber.$touch()"
                                 placeholder="Nhập số điện thoại"
                                 required
                             />
                         </div>
                     </div>
-                    <div class="info-title">B. THÔNG TIN CÔNG VIỆC</div>
+                    <div class="info-title">
+                        {{ this.language.TITLE.WORK_INFO }}
+                    </div>
                     <div class="work-info">
                         <div class="info-item">
                             <p>Vị trí</p>
@@ -139,6 +149,7 @@
                                 v-model="employee.PositionId"
                                 class="m-select-box"
                             >
+                                <option value="" disabled>Chọn vị trí</option>
                                 <option
                                     v-for="position in positions"
                                     :value="position.PositionId"
@@ -154,15 +165,14 @@
                                 id="cbDepartmentName"
                                 v-model="employee.DepartmentId"
                                 class="m-select-box"
-                            >                          
+                            >
+                                <option value="" disabled>
+                                    Chọn phòng ban
+                                </option>
                                 <option
                                     v-for="department in departments"
                                     :key="department.DepartmentId"
                                     :value="department.DepartmentId"
-                                    :selected="
-                                        department.DepartmentId ==
-                                        defaultDepartmentId
-                                    "
                                 >
                                     {{ department.DepartmentName }}
                                 </option>
@@ -183,6 +193,7 @@
                                 type="text"
                                 id="txtSalary"
                                 v-model="employee.Salary"
+                                style="direction: rtl"
                                 class="m-input m-modal-input"
                                 placeholder="Nhập mức lương cơ bản"
                             />
@@ -203,10 +214,18 @@
                                 v-model="employee.WorkStatus"
                                 class="m-select-box"
                             >
-                                <option value="0">Đang làm việc</option>
-                                <option value="1">Đã nghỉ việc</option>
-                                <option value="2">Đang thử việc</option>
-                                <option value="3">Đã nghỉ hưu</option>
+                                <option :value="Enum.WORK_STATUS.WORKING">
+                                    {{ this.language.WORK_STATUS.WORKING }}
+                                </option>
+                                <option :value="Enum.WORK_STATUS.QUIT">
+                                    {{ this.language.WORK_STATUS.QUIT }}
+                                </option>
+                                <option :value="Enum.WORK_STATUS.INTERN">
+                                    {{ this.language.WORK_STATUS.INTERN }}
+                                </option>
+                                <option :value="Enum.WORK_STATUS.RETIRED">
+                                    {{ this.language.WORK_STATUS.RETIRED }}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -218,7 +237,9 @@
                         class="m-btn m-btn-modal m-btn-detele"
                         id="btnDelete"
                         @click="btnDeleteOnClick"
-                        :class="{ isHideButton: formDetailMode == 1 }"
+                        :class="{
+                            isHideButton: formDetailMode == Enum.FORM_MODE.ADD,
+                        }"
                     >
                         Xóa
                     </button>
@@ -227,6 +248,7 @@
                     <button
                         class="m-btn m-btn-modal m-btn-cancel"
                         id="btnCancel"
+                        @click="btnCloseOnClick"
                     >
                         Hủy
                     </button>
@@ -242,18 +264,38 @@
         </div>
     </div>
     <ThePopup
-        :isShowDelete="isDelete"
-        :isShowWarning="isWarning"
+        :dialogType="dialogType"
+        v-if="dialogType != null"
+        :message="message"
         @confirmDelete="deleteEmployee"
-        @isShowDialog="showDialogConfirmDelete"
+        @closePopup="closePopup"
     />
 </template>
 <script>
 import ThePopup from "@/components/layout/ThePopup.vue";
+import TheToast from "@/components/layout/TheToast.vue";
 import axios from "axios";
 import { required, email } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
+import Enum from "@/scripts/enum";
+import Resource from "@/scripts/resource";
+import CommonJS from "@/scripts/common";
 export default {
+    setup: () => ({ v$: useVuelidate() }),
+    components: { ThePopup, TheToast },
+    created() {
+        //Get dữ liệu về phòng ban và vị trí
+        this.getDepartment();
+        this.getPosition();
+
+        //format dữ liệu trước khi bind lên form
+        if (this.employee.Salary != null) {
+            this.employee.Salary = this.common.formatData(
+                this.employee.Salary,
+                Enum.FORMAT_TYPE.MONEY
+            );
+        }
+    },
     mounted() {
         if (this.isShow) {
             this.$nextTick(() => {
@@ -261,25 +303,9 @@ export default {
             });
         }
     },
-    created() {
-        this.getDepartment();
-        this.getPosition();
-    },
-    beforeUpdate() {
-        this.employee.DateOfBirth = this.formatDate(this.employee.DateOfBirth);
-        this.employee.IdentityDate = this.formatDate(
-            this.employee.IdentityDate
-        );
-        this.employee.JoinDate = this.formatDate(this.employee.JoinDate);
-
-        // if (this.isShow) {
-        //     this.$nextTick(() => {
-        //         this.$refs.txtEmployeeCode.focus();
-        //     });
-        // }
-    },
+    beforeUpdate() {},
     updated() {
-        this.v$.$touch();
+        // this.v$.$touch();
     },
     validations() {
         return {
@@ -303,18 +329,39 @@ export default {
             },
         };
     },
-    emits: ["isShowDialog", "childMethodCall"],
+    emits: ["isShowDialog", "childMethodCall", "update:show-toast"],
     methods: {
         //Những hàm xử lý sự kiện
+        /**
+         * Hàm xử lý sự kiện khi click vào nút Lưu trên dialog
+         * CreatedBy: PTSON (08/01/2023)
+         */
         submitForm() {
+            //Format lại dữ liệu trước khi gửi lên server
+            if (this.employee.Salary != null) {
+                this.employee.Salary = this.common.unformatInputMoney(
+                    this.employee.Salary
+                );
+            }
+            //Kiểm tra dữ liệu hợp lệ
+            //Vuelidate for all input
+            this.v$.$touch();
+
             if (this.v$.$errors.length > 0) {
-                alert(this.v$.$errors[0].$message);
+                this.$emit(
+                    "update:show-toast",
+                    this.v$.$errors[0].$message,
+                    Enum.TOAST_TYPE.WARNING
+                );
             } else {
-                //this.employee.Gender = parseInt(this.employee.Gender, 10);
                 this.saveData();
             }
             console.log(this.v$.$errors);
         },
+        /**
+         * Hàm xử lý sự kiện khi click vào nút Hủy/Close trên dialog
+         * CreatedBy: PTSON (08/01/2023)
+         */
         btnCloseOnClick() {
             this.$emit("isShowDialog", false);
         },
@@ -322,43 +369,69 @@ export default {
         //2. Build object employee
         //2. Gọi API lưu dữ liệu
         // Thêm mới thành công, hiển thị toast msg
+
+        /**
+         * Hàm xử lý sự kiện khi click vào nút Lưu
+         * CreatedBy: PTSON (08/14/2023)
+         */
         btnSaveOnClick() {
             this.submitForm();
         },
+        /**
+         * Hàm xử lý sự kiện khi click vào nút xóa
+         * CreatedBy: PTSON (08/14/2023)
+         */
         btnDeleteOnClick() {
-            this.isDelete = true;
+            this.showPopup(
+                this.language.DELETE.DELETE_CONFIRM,
+                Enum.POPUP_TYPE.DELETE
+            );
         },
-        showDialogConfirmDelete(value) {
-            this.isDelete = value;
+        /**
+         * Hiển thị popup kèm theo message
+         * @param {String} message
+         * @param {Enum} type
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        showPopup(message, type) {
+            this.dialogType = type;
+            this.message = message;
         },
+        /**
+         * Hàm xử lý sự kiện khi click vào nút close popup
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        closePopup() {
+            this.dialogType = null;
+        },
+        /**
+         * Hàm xử lý sự kiện khi thay đổi giá trị của giới tính
+         * @param {String} value
+         * CreatedBy: PTSON (08/14/2023)
+         */
         genderOnChange(value) {
             if (typeof value == "string") {
                 value = parseInt(value, 10);
             }
             this.employee.Gender = value;
         },
-        formatDate(value) {
-            value = new Date(value);
-            //Lấy ra ngày
-            let day = value.getDate();
-            day = day < 10 ? `0${day}` : day;
-            //Lấy ra tháng + 1 vì tháng trong JS tính từ 0
-            let month = value.getMonth() + 1;
-            month = month < 10 ? `0${month}` : month;
-            //Lấy ra năm
-            let year = value.getFullYear();
-            //Định dạng ngày tháng năm
-            value = `${year}-${month}-${day}`;
-            return value;
-        },
+        /**
+         * Hàm xử lý khi lưu thông tin nhân viên
+         * Để xác định là thêm mới hay cập nhật
+         * CreatedBy: PTSON (08/14/2023)
+         */
         saveData() {
             //Gọi API lưu dữ liệu
-            if (this.formDetailMode == 1) {
+            if (this.formDetailMode == Enum.FORM_MODE.ADD) {
                 this.addNewEmployee();
             } else {
                 this.updateEmployee();
             }
         },
+        /**
+         * Hàm gọi API để lấy về danh sách phòng ban
+         * CreatedBy: PTSON (08/14/2023)
+         */
         getDepartment() {
             axios
                 .get("https://localhost:7159/api/v1/Department")
@@ -369,6 +442,10 @@ export default {
                     console.log(err);
                 });
         },
+        /**
+         * Hàm gọi API để lấy về danh sách vị trí
+         * CreatedBy: PTSON (08/14/2023)
+         */
         getPosition() {
             axios
                 .get("https://localhost:7159/api/Position")
@@ -379,10 +456,14 @@ export default {
                     console.log(err);
                 });
         },
+        /**
+         * Hàm gọi API để thực hiện thêm mới nhân viên
+         * CreatedBy: PTSON (08/02/2023)
+         */
         addNewEmployee() {
             axios
                 .post(
-                    "https://localhost:7159/api/v1/Employees",
+                    "https://localhost:7159/api/v1/Employee",
                     JSON.stringify(this.employee),
                     {
                         headers: {
@@ -393,6 +474,11 @@ export default {
                 )
                 .then((res) => {
                     //Thành công, hiển thị toast msg
+                    this.$emit(
+                        "update:show-toast",
+                        Resource.VI.SUCCESS.SUCCESS_SAVE,
+                        Enum.TOAST_TYPE.SUCCESS
+                    );
                     console.log(res);
                     this.$emit("isShowDialog", false);
                     this.$emit("childMethodCall");
@@ -400,9 +486,17 @@ export default {
                 .catch((err) => {
                     let userMsg = err.response.data["userMsg"];
                     console.log(userMsg);
-                    alert(userMsg);
+                    this.$emit(
+                        "update:show-toast",
+                        userMsg,
+                        Enum.TOAST_TYPE.ERROR
+                    );
                 });
         },
+        /**
+         * Hàm gọi API để thực hiện cập nhật nhân viên
+         * CreatedBy: PTSON (08/02/2023)
+         */
         updateEmployee() {
             axios
                 .put(
@@ -421,13 +515,28 @@ export default {
                         res
                     );
                     //Thành công, hiển thị toast msg
+                    this.$emit(
+                        "update:show-toast",
+                        Resource.VI.SUCCESS.SUCCESS_SAVE,
+                        Enum.TOAST_TYPE.SUCCESS
+                    );
                     this.$emit("isShowDialog", false);
                     this.$emit("childMethodCall");
                 })
                 .catch((err) => {
-                    console.log(err);
+                    let userMsg = err.response.data["userMsg"];
+                    console.log(userMsg);
+                    this.$emit(
+                        "update:show-toast",
+                        userMsg,
+                        Enum.TOAST_TYPE.ERROR
+                    );
                 });
         },
+        /**
+         * Hàm gọi API để thực hiện xóa nhân viên
+         * CreatedBy: PTSON (08/02/2023)
+         */
         deleteEmployee() {
             axios
                 .delete(
@@ -435,13 +544,24 @@ export default {
                 )
                 .then((res) => {
                     //Thành công, hiển thị toast msg
+                    this.$emit(
+                        "update:show-toast",
+                        Resource.VI.SUCCESS.SUCCESS_DELETE,
+                        Enum.TOAST_TYPE.SUCCESS
+                    );
                     console.log(res);
-                    this.isDelete = false;
+                    this.closeDialog();
                     this.$emit("isShowDialog", false);
                     this.$emit("childMethodCall");
                 })
                 .catch((err) => {
-                    console.log(err);
+                    let userMsg = err.response.data["userMsg"];
+                    console.log(userMsg);
+                    this.$emit(
+                        "update:show-toast",
+                        userMsg,
+                        Enum.TOAST_TYPE.ERROR
+                    );
                 });
         },
     },
@@ -490,16 +610,16 @@ export default {
                         //Nếu có lỗi, gán employee = {} và gọi api để lấy mã nhân viên mới
                         console.log(err);
                         this.employee = {};
-                        axios
-                            .get(
-                                "https://cukcuk.manhnv.net/api/v1/Employee/NewEmployeeCode"
-                            )
-                            .then((res) => {
-                                this.employee.EmployeeCode = res.data;
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                        // axios
+                        //     .get(
+                        //         "https://cukcuk.manhnv.net/api/v1/Employee/NewEmployeeCode"
+                        //     )
+                        //     .then((res) => {
+                        //         this.employee.EmployeeCode = res.data;
+                        //     })
+                        //     .catch((err) => {
+                        //         console.log(err);
+                        //     });
                     });
             }
         },
@@ -507,33 +627,19 @@ export default {
     computed: {},
     data() {
         return {
+            language: Resource[CommonJS.Language],
+            common: CommonJS,
             employee: {
-                EmployeeCode: "",
-                FullName: "",
-                DateOfBirth: "",
-                Gender: 0,
-                Email: "",
-                PhoneNumber: "",
-                DepartmentId: "",
-                PositionId: "",
-                PositionName: "",
-                DepartmentName: "",
-                IdentityNumber: "",
-                IdentityDate: "",
-                IdentityPlace: "",
-                JoinDate: "",
-                WorkStatus: 0,
-                PersonalTaxCode: "",
+                ...this.employeeSelected,
             },
             departments: [],
             positions: [],
-            defaultDepartmentId: "1468ce1f-2c2a-11ee-9c96-00d861883544",
-            v$: useVuelidate(),
-            isDelete: false,
-            isWarning: false,
+            dialogType: null,
+            message: "",
+            Enum,
+            Resource,
         };
     },
-    components: { ThePopup },
 };
 </script>
 <style>

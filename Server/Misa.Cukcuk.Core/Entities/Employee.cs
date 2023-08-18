@@ -11,9 +11,9 @@ namespace Misa.Cukcuk.Core.Entities
     public class Employee
     {
         #region Constructor
-        public Employee() 
-        { 
-            
+        public Employee()
+        {
+
         }
         #endregion
 
@@ -30,6 +30,7 @@ namespace Misa.Cukcuk.Core.Entities
         /// </summary>
         /// Đặt các attribute cho property
         [NotEmpty]
+        [Filterable]
         [PropertyName("Mã nhân viên")]
         public string? EmployeeCode { get; set; }
         /// <summary>
@@ -37,6 +38,7 @@ namespace Misa.Cukcuk.Core.Entities
         /// </summary>
         /// 
         [NotEmpty]
+        [Filterable]
         [PropertyName("Họ và tên")]
         public string? FullName { get; set; }
         /// <summary>
@@ -48,6 +50,7 @@ namespace Misa.Cukcuk.Core.Entities
         /// </summary>
         /// 
         [NotEmpty]
+        [Filterable]
         [PropertyName("Số điện thoại")]
         public string? PhoneNumber { get; set; }
         /// <summary>
@@ -93,16 +96,33 @@ namespace Misa.Cukcuk.Core.Entities
         /// Id phòng ban
         /// </summary>
         /// 
+        [CanNull]
+        [Filterable]
         public Guid? DepartmentId { get; set; }
+        /// <summary>
+        /// Ten phòng ban
+        /// </summary>
+        /// 
+        [NotMap]
+        public string? DepartmentName { get; set; }
+
         /// <summary>
         /// Id vị trí
         /// </summary>
-        ///
-        public Guid PositionId { get; set; }
+        /// 
+        [CanNull]
+        [Filterable]
+        public Guid? PositionId { get; set; }
+        /// <summary>
+        /// Tên vị trí
+        /// </summary>
+        /// 
+        [NotMap]
+        public string? PositionName { get; set; }
         /// <summary>
         /// Ngày tạo
         /// </summary>
-        /// 
+        ///
         public DateTime? CreatedDate { get; set; }
         /// <summary>
         /// Người tạo

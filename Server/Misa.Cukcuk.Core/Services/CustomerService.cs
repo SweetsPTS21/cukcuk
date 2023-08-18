@@ -20,23 +20,11 @@ namespace Misa.Cukcuk.Core.Services
             _customerRepository = customerRepository;
         }
 
-        public int DeleteService(Guid customerId)
-        {
-            throw new NotImplementedException();
-        }
-
         public int UpdateMultipleService(List<Guid> customerIds)
         {
             ///Thực hiện validate dữ liệu khách hàng
             throw new NotImplementedException();
         }
 
-        protected override void ValidateInputField(Customer customer)
-        {
-            if (customer.PhoneNumber != null && customer.PhoneNumber.Length != 10)
-            {
-                throw new ValidateException(Core.Resource.ResourceVN.InvalidPhoneNumber);
-            }
-        }
     }
 }

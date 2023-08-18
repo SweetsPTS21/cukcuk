@@ -18,6 +18,8 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 "Password = 2001;";
         protected MySqlConnection? MySqlConnection;
 
+        protected static int _pageSize = 3;
+
         /// <summary>
         /// Lấy toàn bộ dữ liệu
         /// </summary>
@@ -32,6 +34,7 @@ namespace Misa.Cukcuk.Infrastructure.Repository
             {
                 var sqlCommand = $"SELECT * FROM {className}";
                 var entities = MySqlConnection.Query<MISAEntity>(sqlCommand);
+
                 return entities;
             }
         }
@@ -89,9 +92,12 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 //Kiểm tra prop có attribute là PrimaryKey hay không
                 var primaryKeyAttr = prop.GetCustomAttributes(typeof(PrimaryKey), true);
                 var notMapAttr = prop.GetCustomAttributes(typeof(NotMap), true);
-
+                var canNullAttr = prop.GetCustomAttributes(typeof(CanNull), true);
                 //Nếu property có attribute NotMap thì bỏ qua
                 if (notMapAttr.Length > 0) continue;
+
+                //Nếu property có attribute là CanNull và giá trị của property là null thì bỏ qua
+                if (canNullAttr.Length > 0 && propValue == null) continue;
                 
                 //Nếu property có attribute PrimaryKey thì gán giá trị mới
                 if (primaryKeyAttr.Length > 0 && propName == $"{className}Id")
@@ -165,5 +171,7 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return res;
             }
         }
+
+        
     }
 }

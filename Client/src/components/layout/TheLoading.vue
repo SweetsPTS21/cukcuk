@@ -1,5 +1,5 @@
 <template>
-    <div class="m-loading" :class="{isLoading: showLoading}">
+    <div class="m-loading" :class="{ isLoading: showLoading }">
         <div class="m-loading-icon"></div>
     </div>
 </template>
@@ -11,17 +11,9 @@ export default {
             default: false,
         },
     },
-    watch: {
-        showLoading: function (val) {
-            if (val) {
-                alert("Loading...");
-            }
-        },
-    },
+    watch: {},
     data() {
-        return {
-            
-        }
+        return {};
     },
-}
+};
 </script>

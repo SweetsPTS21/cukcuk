@@ -30,4 +30,14 @@ namespace Misa.Cukcuk.Core.Attributes
     {
 
     }
+    [AttributeUsage(AttributeTargets.Property)]
+    public class CanNull : Attribute
+    {
+
+    }
+    [AttributeUsage(AttributeTargets.Property)]
+    public class Filterable : Attribute
+    {
+
+    }
 }

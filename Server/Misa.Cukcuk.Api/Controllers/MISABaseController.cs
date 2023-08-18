@@ -6,8 +6,6 @@ using Misa.Cukcuk.Core.Interface.Services;
 
 namespace Misa.Cukcuk.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     public class MISABaseController<MISAEntity> : ControllerBase
     {
         IBaseService<MISAEntity> _baseService;
@@ -28,6 +26,7 @@ namespace Misa.Cukcuk.Api.Controllers
         /// </returns>
         /// CREATED BY: PTSON (6/08/2023)
         [HttpGet]
+
         public IActionResult Get()
         {
             try

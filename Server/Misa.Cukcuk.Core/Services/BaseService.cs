@@ -21,28 +21,32 @@ namespace Misa.Cukcuk.Core.Services
         }
         public int InsertService(MISAEntity entity)
         {
-            ValidateData(entity);
-            ValidateInputField(entity);
+            Guid entityId = Guid.NewGuid();
+            ValidateData(entity, entityId);
             var res = _baseRepository.Insert(entity);
             return res;
         }
 
         public int UpdateService(MISAEntity entity, Guid entityId)
         {
-            ValidateData(entity);
+            ValidateData(entity, entityId);
             var res = _baseRepository.Update(entity, entityId);
             return res;
         }
+
+
         public int DeleteService(Guid entityId)
         {
             var res = _baseRepository.Delete(entityId);
             return res;
         }
 
-        private static void ValidateData(MISAEntity entity)
+        private void ValidateData(MISAEntity entity, Guid entityId)
         {
             //Check trùng mã
+            CheckDuplicateEmployeeCode(entity, entityId);
             //Check trùng dữ liệu
+
             //Không được trống
             //get tất cả các property của entity
             var properties = entity.GetType().GetProperties();
@@ -70,11 +74,10 @@ namespace Misa.Cukcuk.Core.Services
             
         }
 
-        protected virtual void ValidateInputField(MISAEntity entity)
+        protected virtual void CheckDuplicateEmployeeCode (MISAEntity entity, Guid entityId)
         {
             //Đã được override ở các class con (EmployeeService, CustomerService)
         }
 
-        
     }
 }

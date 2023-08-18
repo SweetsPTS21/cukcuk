@@ -61,6 +61,15 @@ namespace Misa.Cukcuk.Core.Resource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mã nhân viên đã tồn tại.
+        /// </summary>
+        public static string DuplicateEmployeeCode {
+            get {
+                return ResourceManager.GetString("DuplicateEmployeeCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mã nhân viên đã tồn tại..
         /// </summary>
         public static string EmployeeCode_IsExisted {

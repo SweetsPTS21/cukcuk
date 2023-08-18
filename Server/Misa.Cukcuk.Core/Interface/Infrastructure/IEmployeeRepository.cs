@@ -14,7 +14,24 @@ namespace Misa.Cukcuk.Core.Interface.Infrastructure
         /// </summary>
         /// <returns></returns>
         IEnumerable<Employee> GetPaging(int pageSize, int pageIndex);
-
-        int CheckDuplicateEmployeeCode(string EmployeeCode);
+        IEnumerable<Employee> GetWithFilter(FilterObj filterObj);
+        /// <summary>
+        /// Kiểm tra trùng mã nhân viên khi thêm mới
+        /// </summary>
+        /// <param name="employeeCode"></param>
+        /// <returns></returns>
+        int CheckDuplicateEmployeeCode(string employeeCode, Guid employeeId);
+        /// <summary>
+        /// Get tên vị trí
+        /// </summary>
+        /// <param name="positionId"></param>
+        /// <returns></returns>
+        string GetPositionName(Guid? positionId);
+        /// <summary>
+        /// Get tên phòng ban
+        /// </summary>
+        /// <param name="departmentId"></param>
+        /// <returns></returns>
+        string GetDepartmentName(Guid? departmentId);
     }
 }

@@ -18,17 +18,19 @@ namespace Misa.Cukcuk.Core.Services
             _employeeRepository = employeeRepository;
         }
 
-        protected override void ValidateInputField(Employee employee)
+        protected override void CheckDuplicateEmployeeCode(Employee employee, Guid employeeId)
         {
             if (employee != null)
             {
-                var isDuplicate = _employeeRepository.CheckDuplicateEmployeeCode(employee.EmployeeCode);
+                var isDuplicate = _employeeRepository.CheckDuplicateEmployeeCode(employee.EmployeeCode, employeeId);
                 if (isDuplicate == 1)
                 {
-                    throw new ValidateException("Mã nhân viên đã tồn tại");
+                    throw new ValidateException(Resource.ResourceVN.DuplicateEmployeeCode);
                 }
             }
             
         }
+
+
     }
 }
