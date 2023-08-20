@@ -19,6 +19,15 @@ namespace Misa.Cukcuk.Core.Services
         {
             _baseRepository = baseRepository;
         }
+        /// <summary>
+        /// Service thêm mới dữ liệu
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>
+        /// 1: Thêm mới thành công
+        /// 0: Thêm mới thất bại
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public int InsertService(MISAEntity entity)
         {
             Guid entityId = Guid.NewGuid();
@@ -26,7 +35,16 @@ namespace Misa.Cukcuk.Core.Services
             var res = _baseRepository.Insert(entity);
             return res;
         }
-
+        /// <summary>
+        /// Service cập nhật dữ liệu
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="entityId"></param>
+        /// <returns>
+        /// 1: Cập nhật thành công
+        /// 0: Cập nhật thất bại
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public int UpdateService(MISAEntity entity, Guid entityId)
         {
             ValidateData(entity, entityId);
@@ -34,13 +52,27 @@ namespace Misa.Cukcuk.Core.Services
             return res;
         }
 
-
+        /// <summary>
+        /// Service xóa dữ liệu
+        /// </summary>
+        /// <param name="entityId"></param>
+        /// <returns>
+        /// 1: Xóa thành công
+        /// 0: Xóa thất bại
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public int DeleteService(Guid entityId)
         {
             var res = _baseRepository.Delete(entityId);
             return res;
         }
-
+        /// <summary>
+        /// Validate dữ liệu
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="entityId"></param>
+        /// <exception cref="ValidateException"></exception>
+        /// CREATED BY: PTSON (01/08/2023)
         private void ValidateData(MISAEntity entity, Guid entityId)
         {
             //Check trùng mã
@@ -73,7 +105,12 @@ namespace Misa.Cukcuk.Core.Services
             }
             
         }
-
+        /// <summary>
+        /// Check trùng mã nhân viên
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="entityId"></param>
+        /// CREATED BY: PTSON (01/08/2023)
         protected virtual void CheckDuplicateEmployeeCode (MISAEntity entity, Guid entityId)
         {
             //Đã được override ở các class con (EmployeeService, CustomerService)

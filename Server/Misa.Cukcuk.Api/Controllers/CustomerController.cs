@@ -18,6 +18,11 @@ namespace Misa.Cukcuk.Api.Controllers
             _customerRepository = customerRepository;
             _customerService = customerService;
         }
+        /// <summary>
+        /// Lấy toàn bộ dữ liệu
+        /// </summary>
+        /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
         [HttpGet]
         public IActionResult Get()
         {
@@ -38,6 +43,13 @@ namespace Misa.Cukcuk.Api.Controllers
             }
             
         }
+
+        /// <summary>
+        /// Thêm mới dữ liệu
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
         [HttpPost]
         public IActionResult Post(Customer customer)
         {

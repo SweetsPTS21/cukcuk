@@ -4,6 +4,9 @@ using Dapper;
 using MySqlConnector;
 using Misa.Cukcuk.Core.Attributes;
 using System;
+using System.Data.Common;
+using System.Text.RegularExpressions;
+using System.IO;
 
 namespace Misa.Cukcuk.Infrastructure.Repository
 {
@@ -14,64 +17,59 @@ namespace Misa.Cukcuk.Infrastructure.Repository
         {
             
         }
-
+        /// <summary>
+        /// Lấy dữ liệu nhân viên theo tiêu chí lọc
+        /// </summary>
+        /// <param name="filterObj"></param>
+        /// <returns>
+        /// employees: danh sách nhân viên
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public IEnumerable<Employee> GetWithFilter(FilterObj filterObj)
         {
-            var entities = GetAll();
-            #region Filter
-            //Lọc dữ liệu
-            var filter = new 
-            {
-                key = filterObj.Search,
-                did = filterObj.DepartmentId,
-                pid = filterObj.PositionId
-            };
-            //Kiểm tra xem có phải là object rỗng không
-            var filterable = filter.GetType().GetProperties().Any(property => property.GetValue(filter) != null);
+            var key = filterObj.Search;
+            var pid = filterObj.PositionId != null ? filterObj.PositionId : "";
+            var did = filterObj.DepartmentId != null ? filterObj.DepartmentId : "";
 
-            if (filterable)
+            var sql = $"SELECT * FROM employee WHERE (EmployeeCode LIKE \"%{key}%\" " +
+                $"OR FullName LIKE \"%{key}%\" OR PhoneNumber LIKE \"%{key}%\") " +
+                $"AND (PositionId LIKE \"%{pid}%\" OR PositionId IS NULL) AND (DepartmentId LIKE \"%{did}%\" OR DepartmentId IS NULL)";
+            using(MySqlConnection = new MySqlConnection(ConnectionString))
             {
-                var properties = typeof(Employee).GetProperties().Where(p => p.IsDefined(typeof(Filterable), true));
-                entities = entities.Where(entity =>
-                {             
-                    foreach (var property in properties)
-                    {
-                        if (property.GetValue(entity) != null)
-                        {
-                            var name = property.Name;
-                            var value = property.GetValue(entity).ToString();
-                            if (name == "FullName" && !value.ToLower().Contains(filter.key.ToLower()) ||
-                                name == "DepartmentId" && filter.did != null &&  !value.Contains(filter.did) ||
-                                name == "PositionId" && filter.pid != null &&  !value.Contains(filter.pid))
-                            {
-                                return false;
-                            }
-                            }
+                var employees = MySqlConnection.Query<Employee>(sql);
 
-                    }
-                    return true;
-                    
-                });
+                employees = PaginatedList<Employee>.Create(employees.AsQueryable(), filterObj.Page, filterObj.PageSize);
+                return employees;
             }
-            #endregion
-
-            #region Paging
-            //Phân trang
-            entities = PaginatedList<Employee>.Create(entities.AsQueryable(), filterObj.Page, filterObj.PageSize);
-            #endregion
-            return entities;
         }
-
+        /// <summary>
+        /// Lấy dữ liệu phân trang
+        /// </summary>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns>
+        /// employees: Danh sách nhân viên
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public IEnumerable<Employee> GetPaging(int pageSize, int pageIndex)
         {
             var sql = $"select * from employee limit {pageSize} offset {pageIndex}";
-            using(MySqlConnection = new MySqlConnection(ConnectionString))
+            using (MySqlConnection = new MySqlConnection(ConnectionString))
             {
                 var employees = MySqlConnection.Query<Employee>(sql);
                 return employees;
             }
         }
-
+        /// <summary>
+        /// Check trùng mã nhân viên
+        /// </summary>
+        /// <param name="employeeCode"></param>
+        /// <param name="employeeId"></param>
+        /// <returns>
+        /// 1: Trùng mã nhân viên
+        /// 0: Không trùng mã nhân viên
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public int CheckDuplicateEmployeeCode(string employeeCode, Guid employeeId)
         {
             using(MySqlConnection = new MySqlConnection(ConnectionString))
@@ -83,7 +81,14 @@ namespace Misa.Cukcuk.Infrastructure.Repository
             }
             
         }
-
+        /// <summary>
+        /// Lấy tên vị trí
+        /// </summary>
+        /// <param name="positionId"></param>
+        /// <returns>
+        /// String: Tên vị trí
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public string GetPositionName(Guid? positionId)
         {
             using(MySqlConnection = new MySqlConnection(ConnectionString))
@@ -94,7 +99,14 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return positionName;
             }
         }
-
+        /// <summary>
+        /// Lấy tên phòng ban
+        /// </summary>
+        /// <param name="departmentId"></param>
+        /// <returns>
+        /// String: Tên phòng ban
+        /// </returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public string GetDepartmentName(Guid? departmentId)
         {
             using(MySqlConnection = new MySqlConnection(ConnectionString))
@@ -105,6 +117,38 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return departmentName;
             }
         }
+        /// <summary>
+        /// Lấy mã nhân viên mới
+        /// </summary>
+        /// <returns>
+        /// String: Mã nhân viên mới
+        /// </returns>
+        /// CREATED BY: PTSON (20/08/2023)
+        public string GetNewEmployeeCode()
+        {
+            using (MySqlConnection = new MySqlConnection(ConnectionString))
+            {
+                var sql = "SELECT EmployeeCode FROM employee LIMIT 1";
+                var employeeCode = MySqlConnection.QueryFirstOrDefault<string>(sql);
+                string newEmployeeCode = "NV-001";
 
+                if (employeeCode != null)
+                {
+                    string pattern = @"([A-Za-z-]+)(\d+)";
+                    Match match = Regex.Match(employeeCode, pattern);
+                    int code = int.Parse(match.Groups[2].Value) + 1;
+                    if (match.Success)
+                    {
+                        newEmployeeCode = $"{match.Groups[1].Value}{code}";                     
+                    }
+                    while (CheckDuplicateEmployeeCode(newEmployeeCode, Guid.Empty) == 1)
+                    {
+                        code++;
+                        newEmployeeCode = $"{match.Groups[1].Value}{code}";
+                    }
+                }              
+                return newEmployeeCode;
+            }
+        }
     }
 }

@@ -44,6 +44,8 @@ namespace Misa.Cukcuk.Core.Entities
         /// <summary>
         /// Giới tính
         /// </summary>
+        /// 
+        [CanNull]
         public Gender? Gender { get; set; }
         /// <summary>
         /// Số điện thoại
@@ -87,10 +89,12 @@ namespace Misa.Cukcuk.Core.Entities
         /// <summary>
         /// Ngày gia nhập
         /// </summary>
-        public DateTime? JoinDate { get; set; } 
+        public DateTime? JoinDate { get; set; }
         /// <summary>
         /// Tình trạng công việc
         /// </summary>
+        /// 
+        [CanNull]
         public int? WorkStatus { get; set; }
         /// <summary>
         /// Id phòng ban

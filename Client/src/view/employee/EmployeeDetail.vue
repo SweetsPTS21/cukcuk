@@ -59,18 +59,12 @@
                         </div>
                         <div class="info-item">
                             <p>Giới tính</p>
-                            <select
-                                value=""
-                                class="m-select-box"
-                                id="cbGender"
-                                ref="cbGender"
-                                @change="genderOnChange(employee.Gender)"
+                            <MISASelect
                                 v-model="employee.Gender"
-                            >
-                                <option :value="Enum.GENDER.MALE">Nam</option>
-                                <option :value="Enum.GENDER.FEMALE">Nữ</option>
-                                <option :value="Enum.GENDER.OTHER">Khác</option>
-                            </select>
+                                :options="genderList"
+                                displayProp="Name"
+                                valueProp="Value"
+                            ></MISASelect>
                         </div>
                         <div class="info-item">
                             <p>Số CMTND/Căn cước (*)</p>
@@ -143,40 +137,21 @@
                     <div class="work-info">
                         <div class="info-item">
                             <p>Vị trí</p>
-                            <select
-                                name=""
-                                id="cbPositionName"
+                            <MISASelect
                                 v-model="employee.PositionId"
-                                class="m-select-box"
-                            >
-                                <option value="" disabled>Chọn vị trí</option>
-                                <option
-                                    v-for="position in positions"
-                                    :value="position.PositionId"
-                                >
-                                    {{ position.PositionName }}
-                                </option>
-                            </select>
+                                :options="positionList"
+                                displayProp="PositionName"
+                                valueProp="PositionId"
+                            ></MISASelect>
                         </div>
                         <div class="info-item">
                             <p>Phòng ban</p>
-                            <select
-                                name=""
-                                id="cbDepartmentName"
+                            <MISASelect
                                 v-model="employee.DepartmentId"
-                                class="m-select-box"
-                            >
-                                <option value="" disabled>
-                                    Chọn phòng ban
-                                </option>
-                                <option
-                                    v-for="department in departments"
-                                    :key="department.DepartmentId"
-                                    :value="department.DepartmentId"
-                                >
-                                    {{ department.DepartmentName }}
-                                </option>
-                            </select>
+                                :options="departmentList"
+                                displayProp="DepartmentName"
+                                valueProp="DepartmentId"
+                            ></MISASelect>
                         </div>
                         <div class="info-item">
                             <p>Mã số thuế cá nhân</p>
@@ -208,25 +183,12 @@
                         </div>
                         <div class="info-item">
                             <p>Tình trạng công việc</p>
-                            <select
-                                name=""
-                                id="cbWorkStatus"
+                            <MISASelect
                                 v-model="employee.WorkStatus"
-                                class="m-select-box"
-                            >
-                                <option :value="Enum.WORK_STATUS.WORKING">
-                                    {{ this.language.WORK_STATUS.WORKING }}
-                                </option>
-                                <option :value="Enum.WORK_STATUS.QUIT">
-                                    {{ this.language.WORK_STATUS.QUIT }}
-                                </option>
-                                <option :value="Enum.WORK_STATUS.INTERN">
-                                    {{ this.language.WORK_STATUS.INTERN }}
-                                </option>
-                                <option :value="Enum.WORK_STATUS.RETIRED">
-                                    {{ this.language.WORK_STATUS.RETIRED }}
-                                </option>
-                            </select>
+                                :options="workStatusList"
+                                displayProp="Name"
+                                valueProp="Value"
+                            ></MISASelect>
                         </div>
                     </div>
                 </div>
@@ -274,20 +236,46 @@
 <script>
 import ThePopup from "@/components/layout/ThePopup.vue";
 import TheToast from "@/components/layout/TheToast.vue";
+import MISASelect from "@/components/base/MISASelect.vue";
 import axios from "axios";
 import { required, email } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import Enum from "@/scripts/enum";
 import Resource from "@/scripts/resource";
 import CommonJS from "@/scripts/common";
+import Default from "@/scripts/default";
 export default {
     setup: () => ({ v$: useVuelidate() }),
-    components: { ThePopup, TheToast },
+    components: { ThePopup, TheToast, MISASelect },
+    props: {
+        //Những property nhận được từ component cha
+        isShow: {
+            type: Boolean,
+            default: false,
+        },
+        employeeSelected: {
+            type: Object,
+            default: {},
+        },
+        employeeSelectedId: {
+            type: String,
+            default: "",
+        },
+        formDetailMode: {
+            type: Number,
+            default: 1,
+        },
+        positionList: {
+            type: Array,
+            default: [],
+        },
+        departmentList: {
+            type: Array,
+            default: [],
+        },
+    },
+    emits: ["isShowDialog", "loadData", "update:show-toast"],
     created() {
-        //Get dữ liệu về phòng ban và vị trí
-        this.getDepartment();
-        this.getPosition();
-
         //format dữ liệu trước khi bind lên form
         if (this.employee.Salary != null) {
             this.employee.Salary = this.common.formatData(
@@ -329,7 +317,6 @@ export default {
             },
         };
     },
-    emits: ["isShowDialog", "childMethodCall", "update:show-toast"],
     methods: {
         //Những hàm xử lý sự kiện
         /**
@@ -405,17 +392,6 @@ export default {
             this.dialogType = null;
         },
         /**
-         * Hàm xử lý sự kiện khi thay đổi giá trị của giới tính
-         * @param {String} value
-         * CreatedBy: PTSON (08/14/2023)
-         */
-        genderOnChange(value) {
-            if (typeof value == "string") {
-                value = parseInt(value, 10);
-            }
-            this.employee.Gender = value;
-        },
-        /**
          * Hàm xử lý khi lưu thông tin nhân viên
          * Để xác định là thêm mới hay cập nhật
          * CreatedBy: PTSON (08/14/2023)
@@ -439,7 +415,27 @@ export default {
                     this.departments = res.data;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    let response = err.response;
+                    var userMsg = err.response.data["userMsg"];
+                    switch (response.status) {
+                        case 400:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        case 500:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log(userMsg);
                 });
         },
         /**
@@ -453,7 +449,27 @@ export default {
                     this.positions = res.data;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    let response = err.response;
+                    var userMsg = err.response.data["userMsg"];
+                    switch (response.status) {
+                        case 400:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        case 500:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log(userMsg);
                 });
         },
         /**
@@ -481,16 +497,30 @@ export default {
                     );
                     console.log(res);
                     this.$emit("isShowDialog", false);
-                    this.$emit("childMethodCall");
+                    this.$emit("loadData");
                 })
                 .catch((err) => {
-                    let userMsg = err.response.data["userMsg"];
+                    let response = err.response;
+                    var userMsg = err.response.data["userMsg"];
+                    switch (response.status) {
+                        case 400:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        case 500:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        default:
+                            break;
+                    }
                     console.log(userMsg);
-                    this.$emit(
-                        "update:show-toast",
-                        userMsg,
-                        Enum.TOAST_TYPE.ERROR
-                    );
                 });
         },
         /**
@@ -521,16 +551,30 @@ export default {
                         Enum.TOAST_TYPE.SUCCESS
                     );
                     this.$emit("isShowDialog", false);
-                    this.$emit("childMethodCall");
+                    this.$emit("loadData");
                 })
                 .catch((err) => {
-                    let userMsg = err.response.data["userMsg"];
+                    let response = err.response;
+                    var userMsg = err.response.data["userMsg"];
+                    switch (response.status) {
+                        case 400:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        case 500:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        default:
+                            break;
+                    }
                     console.log(userMsg);
-                    this.$emit(
-                        "update:show-toast",
-                        userMsg,
-                        Enum.TOAST_TYPE.ERROR
-                    );
                 });
         },
         /**
@@ -552,36 +596,31 @@ export default {
                     console.log(res);
                     this.closeDialog();
                     this.$emit("isShowDialog", false);
-                    this.$emit("childMethodCall");
+                    this.$emit("loadData");
                 })
                 .catch((err) => {
-                    let userMsg = err.response.data["userMsg"];
+                    let response = err.response;
+                    var userMsg = err.response.data["userMsg"];
+                    switch (response.status) {
+                        case 400:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        case 500:
+                            this.$emit(
+                                "update:show-toast",
+                                userMsg,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        default:
+                            break;
+                    }
                     console.log(userMsg);
-                    this.$emit(
-                        "update:show-toast",
-                        userMsg,
-                        Enum.TOAST_TYPE.ERROR
-                    );
                 });
-        },
-    },
-    props: {
-        //Những property nhận được từ component cha
-        isShow: {
-            type: Boolean,
-            default: false,
-        },
-        employeeSelected: {
-            type: Object,
-            default: {},
-        },
-        employeeSelectedId: {
-            type: String,
-            default: "",
-        },
-        formDetailMode: {
-            type: Number,
-            default: 1,
         },
     },
     watch: {
@@ -610,16 +649,36 @@ export default {
                         //Nếu có lỗi, gán employee = {} và gọi api để lấy mã nhân viên mới
                         console.log(err);
                         this.employee = {};
-                        // axios
-                        //     .get(
-                        //         "https://cukcuk.manhnv.net/api/v1/Employee/NewEmployeeCode"
-                        //     )
-                        //     .then((res) => {
-                        //         this.employee.EmployeeCode = res.data;
-                        //     })
-                        //     .catch((err) => {
-                        //         console.log(err);
-                        //     });
+                        axios
+                            .get(
+                                "https://localhost:7159/api/v1/Employee/NewEmployeeCode"
+                            )
+                            .then((res) => {
+                                this.employee.EmployeeCode = res.data;
+                            })
+                            .catch((err) => {
+                                let response = err.response;
+                                var userMsg = err.response.data["userMsg"];
+                                switch (response.status) {
+                                    case 400:
+                                        this.$emit(
+                                            "update:show-toast",
+                                            userMsg,
+                                            Enum.TOAST_TYPE.ERROR
+                                        );
+                                        break;
+                                    case 500:
+                                        this.$emit(
+                                            "update:show-toast",
+                                            userMsg,
+                                            Enum.TOAST_TYPE.ERROR
+                                        );
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                console.log(userMsg);
+                            });
                     });
             }
         },
@@ -632,8 +691,8 @@ export default {
             employee: {
                 ...this.employeeSelected,
             },
-            departments: [],
-            positions: [],
+            genderList: [...Default.Gender],
+            workStatusList: [...Default.WorkStatus],
             dialogType: null,
             message: "",
             Enum,

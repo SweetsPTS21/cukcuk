@@ -2,13 +2,11 @@
     <div class="page-content">
         <div class="m-page-header">
             <div class="m-page-title">Danh sách nhân viên</div>
-            <button
-                class="m-btn m-btn-icon m-btn-icon-add"
-                id="btnAdd"
-                @click="btnAddOnClick"
-            >
-                Thêm thành viên
-            </button>
+            <MISAButton
+                :text="this.language.BUTTON.ADD"
+                classValue="m-btn m-btn-icon m-btn-icon-add m-btn-add"
+                :clickFunction="btnAddOnClick"
+            ></MISAButton>
         </div>
         <div class="m-page-toolbar">
             <div class="m-page-toolbar-left">
@@ -18,57 +16,24 @@
                         class="m-input m-input-icon m-icon-search m-icon-16"
                         placeholder="Tìm kiếm theo Mã, Tên hoặc Số điện thoại"
                         v-model="filterObj.Search"
+                        @input="handleSearchInput"
                     />
                 </div>
                 <div class="m-page-toolbar-item">
-                    <select
-                        name=""
-                        id=""
-                        class="m-select-box m-box-custom"
-                        @change="filterDepartment($event.target.value)"
-                    >
-                        <option value="">Tất cả phòng ban</option>
-                        <option value="14697e7f-2c2a-11ee-9c96-00d861883544">
-                            Phòng nhân sự
-                        </option>
-                        <option value="1468ce1f-2c2a-11ee-9c96-00d861883544">
-                            Phòng Hành Chính
-                        </option>
-                        <option value="1469aa1d-2c2a-11ee-9c96-00d861883544">
-                            Phòng Công Nghệ Thông Tin
-                        </option>
-                        <option value="1469e5f4-2c2a-11ee-9c96-00d861883544">
-                            Phòng Kế Toán
-                        </option>
-                    </select>
-                    <div class="m-select-box-icon">
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
+                    <MISASelect
+                        v-model="filterObj.DepartmentId"
+                        :options="departmentList"
+                        displayProp="DepartmentName"
+                        valueProp="DepartmentId"
+                    ></MISASelect>
                 </div>
                 <div class="m-page-toolbar-item">
-                    <select
-                        name=""
-                        id=""
-                        class="m-select-box m-box-custom"
-                        @change="filterPosition($event.target.value)"
-                    >
-                        <option value="">Tất cả</option>
-                        <option value="d770ef72-2c29-11ee-9c96-00d861883544">
-                            Trưởng Phòng
-                        </option>
-                        <option value="b03276b9-2c29-11ee-9c96-00d861883544">
-                            Nhân Viên
-                        </option>
-                        <option value="c1168093-2c29-11ee-9c96-00d861883544">
-                            Trưởng Nhóm
-                        </option>
-                        <option value="d7716916-2c29-11ee-9c96-00d861883544">
-                            Giám đốc
-                        </option>
-                    </select>
-                    <div class="m-select-box-icon">
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
+                    <MISASelect
+                        v-model="filterObj.PositionId"
+                        :options="positionList"
+                        displayProp="PositionName"
+                        valueProp="PositionId"
+                    ></MISASelect>
                 </div>
             </div>
             <div class="m-page-toolbar-right">
@@ -176,10 +141,20 @@
                         </td>
                         <td class="text-align-left">{{ employee.FullName }}</td>
                         <td class="text-align-center">
-                            {{ formatData(employee.Gender, Enum.FORMAT_TYPE.GENDER) }}
+                            {{
+                                formatData(
+                                    employee.Gender,
+                                    Enum.FORMAT_TYPE.GENDER
+                                )
+                            }}
                         </td>
                         <td class="text-align-center">
-                            {{ formatData(employee.DateOfBirth, Enum.FORMAT_TYPE.DATE) }}
+                            {{
+                                formatData(
+                                    employee.DateOfBirth,
+                                    Enum.FORMAT_TYPE.DATE
+                                )
+                            }}
                         </td>
                         <td class="text-align-left">
                             {{ employee.PhoneNumber }}
@@ -192,10 +167,20 @@
                             {{ employee.DepartmentName }}
                         </td>
                         <td class="text-align-right">
-                            {{ formatData(employee.Salary, Enum.FORMAT_TYPE.MONEY) }}
+                            {{
+                                formatData(
+                                    employee.Salary,
+                                    Enum.FORMAT_TYPE.MONEY
+                                )
+                            }}
                         </td>
                         <td class="text-align-left">
-                            {{ formatData(employee.WorkStatus, Enum.FORMAT_TYPE.WORK_STATUS) }}
+                            {{
+                                formatData(
+                                    employee.WorkStatus,
+                                    Enum.FORMAT_TYPE.WORK_STATUS
+                                )
+                            }}
                         </td>
                     </tr>
                 </tbody>
@@ -260,13 +245,15 @@
         </div>
     </div>
     <EmployeeDetail
+        v-if="isShowDialog"
+        :departmentList="departmentList"
+        :positionList="positionList"
         :employeeSelected="employeeSelected"
         :employeeSelectedId="employeeSelectedId"
         :isShow="isShowDialog"
-        v-if="isShowDialog"
         @isShowDialog="showDialogEmployeeDetail"
         :formDetailMode="formDetailMode"
-        @childMethodCall="loadData"
+        @loadData="loadData"
         @update:show-toast="showToast"
     />
     <TheToast
@@ -285,6 +272,8 @@
 import axios from "axios";
 import EmployeeDetail from "./EmployeeDetail.vue";
 import TheToast from "@/components/layout/TheToast.vue";
+import MISASelect from "@/components/base/MISASelect.vue";
+import MISAButton from "@/components/base/MISAButton.vue";
 import Enum from "@/scripts/enum";
 import Resource from "@/scripts/resource";
 import Default from "@/scripts/default";
@@ -292,7 +281,10 @@ import CommonJS from "@/scripts/common";
 export default {
     name: "EmployeeList",
     components: {
-        EmployeeDetail, TheToast,
+        EmployeeDetail,
+        TheToast,
+        MISASelect,
+        MISAButton,
     },
     //Vòng đời của Vue component
     beforeCreate() {
@@ -307,6 +299,9 @@ export default {
         //Gọi API để lấy dữ liệu - Dùng axios (giống ajax)
         this.isLoading = true;
         this.loadData();
+        //Get dữ liệu về phòng ban và vị trí
+        this.getDepartment();
+        this.getPosition();
     },
     beforeMount() {
         //Có thể truy cập data, event, method ở đây
@@ -373,6 +368,18 @@ export default {
             this.formDetailMode = Enum.FORM_MODE.UPDATE;
         },
         /**
+         * Hàm xử lý khi nhập vào ô tìm kiếm
+         * CreatedBy: PTSON (08/03/2023)
+         */
+        handleSearchInput() {
+            clearTimeout(this.typingTimer);
+            this.typingTimer = setTimeout(() => {
+                //Quay về trang 1 trước khi tìm kiếm
+                this.filterObj.Page = 1;
+                this.filterData();
+            }, this.delay);
+        },
+        /**
          * Hàm xử lý khi click vào nút refresh
          * CreatedBy: PTSON (08/03/2023)
          */
@@ -399,11 +406,52 @@ export default {
             return CommonJS.formatData(value, type);
         },
         /**
-         * Lấy dữ liệu tất cả nhân viên
+         * Hàm gọi API để lấy về danh sách phòng ban
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        getDepartment() {
+            axios
+                .get("https://localhost:7159/api/v1/Department")
+                .then((res) => {
+                    this.departmentList = res.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        /**
+         * Hàm gọi API để lấy về danh sách vị trí
+         * CreatedBy: PTSON (08/14/2023)
+         */
+        getPosition() {
+            axios
+                .get("https://localhost:7159/api/Position")
+                .then((res) => {
+                    this.positionList = res.data;
+                })
+                .catch((err) => {
+                    let response = err.response;
+                    switch (response.status) {
+                        case 400:
+                            var userMsg = err.response.data["userMsg"];
+                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                            break;
+                        case 500:
+                            var userMsg = err.response.data["userMsg"];
+                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log(userMsg);
+                });
+        },
+        /**
+         * Lọc dữ liệu theo điều kiện
          * @returns
          * CreatedBy: PTSON (08/14/2023)
          */
-        loadData() {
+        filterData() {
             this.isLoading = true;
             axios
                 .post(
@@ -415,9 +463,50 @@ export default {
                     this.isLoading = false;
                 })
                 .catch((err) => {
+                    let response = err.response;
+                    switch (response.status) {
+                        case 400:
+                            var userMsg = err.response.data["userMsg"];
+                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                            break;
+                        case 500:
+                            var userMsg = err.response.data["userMsg"];
+                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log(userMsg);
+                });
+        },
+        loadData() {
+            this.isLoading = true;
+            axios
+                .get(
+                    `https://localhost:7159/api/v1/Employee/page?pageSize=${this.filterObj.PageSize}&pageIndex=${this.filterObj.Page}`
+                )
+                .then((res) => {
+                    this.employeeList = res.data;
                     this.isLoading = false;
-                    alert("Không thể lấy dữ liệu từ server");
-                    console.log(err);
+                })
+                .catch((err) => {
+                    let response = err.response;
+                    switch (response.status) {
+                        case 400:
+                            var userMsg = err.response.data["userMsg"];
+                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                            break;
+                        case 500:
+                            var userMsg = err.response.data["userMsg"];
+                            this.showToast(
+                                this.language.STATUS_CODE.INTERNAL_SERVER,
+                                Enum.TOAST_TYPE.ERROR
+                            );
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log(userMsg);
                 });
         },
         /**
@@ -476,45 +565,30 @@ export default {
     },
     watch: {
         "filterObj.PageSize": function (oldValue, newValue) {
-            this.loadData();
+            this.filterData();
         },
         "filterObj.Page"() {
-            this.loadData();
-        },
-        "filterObj.Search"() {
-            this.loadData();
+            this.filterData();
         },
         "filterObj.DepartmentId"() {
-            this.loadData();
+            this.filterObj.Page = 1;
+            this.filterData();
         },
         "filterObj.PositionId"() {
-            this.loadData();
+            this.filterObj.Page = 1;
+            this.filterData();
         },
     },
-    computed: {
-        filterList() {
-            let key = this.searchEmployee.toLowerCase();
-
-            return this.employeeList.filter(
-                (employee) =>
-                    (employee.FullName.toLowerCase().includes(key) &&
-                        employee.DepartmentId.includes(this.searchDepartment) &&
-                        employee.PositionId.includes(this.searchPosition)) ||
-                    (employee.EmployeeCode.toLowerCase().includes(key) &&
-                        employee.DepartmentId.includes(this.searchDepartment) &&
-                        employee.PositionId.includes(this.searchPosition)) ||
-                    (employee.PhoneNumber.toLowerCase().includes(key) &&
-                        employee.DepartmentId.includes(this.searchDepartment) &&
-                        employee.PositionId.includes(this.searchPosition))
-            );
-        },
-    },
+    computed: {},
     data() {
         return {
+            language: Resource[CommonJS.Language],
             filterObj: {
                 ...Default.Filter,
             },
             employeeList: [],
+            departmentList: [],
+            positionList: [],
             isShowDialog: false,
             employeeSelectedId: null,
             employeeSelected: {},
@@ -526,6 +600,10 @@ export default {
             isShowToast: false,
             toastMessage: "",
             toastType: 0,
+
+            typingTimer: null,
+            delay: 1000,
+
             Enum,
             Resource,
         };

@@ -44,11 +44,13 @@ class CommonJS {
                         case Enum.GENDER.MALE:
                             value = language.GENDER.MALE;
                             break;
-                        case 1:
+                        case Enum.GENDER.FEMALE:
                             value = language.GENDER.FEMALE;
                             break;
-                        default:
+                        case Enum.GENDER.OTHER:
                             value = language.GENDER.OTHER;
+                            break;
+                        default:
                             break;
                     }
                 }

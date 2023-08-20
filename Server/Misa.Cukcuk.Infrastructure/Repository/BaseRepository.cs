@@ -24,8 +24,8 @@ namespace Misa.Cukcuk.Infrastructure.Repository
         /// Lấy toàn bộ dữ liệu
         /// </summary>
         /// <typeparam name="MISAEntity">type of object</typeparam>
-        /// Author: PTSon(4/8/2023)
         /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public IEnumerable<MISAEntity> GetAll()
         {
             //lấy ra tên của class
@@ -38,6 +38,13 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return entities;
             }
         }
+
+        /// <summary>
+        /// Lấy dữ liệu theo id
+        /// </summary>
+        /// <param name="MISAEntityId"></param>
+        /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public MISAEntity GetById(Guid MISAEntityId)
         {
             //1. Khởi tạo kết nối
@@ -52,7 +59,12 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return entity;
             }
         }
-
+        /// <summary>
+        /// Xóa dữ liệu theo id
+        /// </summary>
+        /// <param name="entityId"></param>
+        /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public int Delete(Guid entityId)
         {
             string className = typeof(MISAEntity).Name;
@@ -67,7 +79,12 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return res;
             }
         }
-
+        /// <summary>
+        /// Thêm mới dữ liệu
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
         public virtual int Insert(MISAEntity entity)
         {
             //Build sql command để thực hiện thêm mới dữ liệu
@@ -97,14 +114,14 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 if (notMapAttr.Length > 0) continue;
 
                 //Nếu property có attribute là CanNull và giá trị của property là null thì bỏ qua
-                if (canNullAttr.Length > 0 && propValue == null) continue;
+                if (canNullAttr.Length > 0 && (propValue == null || propValue.ToString() == "")) continue;
                 
                 //Nếu property có attribute PrimaryKey thì gán giá trị mới
                 if (primaryKeyAttr.Length > 0 && propName == $"{className}Id")
                 {
                     propValue = Guid.NewGuid();
                 }
-
+           
 
                 //Thực hiện build câu lệnh sql
                 var paramName = $"@{propName}";
@@ -123,8 +140,14 @@ namespace Misa.Cukcuk.Infrastructure.Repository
             }
             
         }
-
-        public virtual int Update(MISAEntity entity, Guid entityId)
+        /// <summary>
+        /// Cập nhật dữ liệu
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="entityId"></param>
+        /// <returns></returns>
+        /// CREATED BY: PTSON (01/08/2023)
+        public int Update(MISAEntity entity, Guid entityId)
         {
             //Build sql command để thực hiện thêm mới dữ liệu
             //1. Khởi tạo kết nối
@@ -147,9 +170,12 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 //Kiểm tra prop có attribute là PrimaryKey hay không
                 var primaryKeyAttr = prop.GetCustomAttributes(typeof(PrimaryKey), true);
                 var notMapAttr = prop.GetCustomAttributes(typeof(NotMap), true);
-
+                //var canNullAttr = prop.GetCustomAttributes(typeof(CanNull), true);
                 //Nếu property có attribute NotMap thì bỏ qua
                 if (notMapAttr.Length > 0) continue;
+
+                //Nếu property có attribute là CanNull và giá trị của property là null thì bỏ qua
+                //if (canNullAttr.Length > 0 && (propValue == null || propValue.ToString() == "")) continue;
 
                 //Nếu property có attribute PrimaryKey thì bỏ qua
                 if (primaryKeyAttr.Length > 0 && propName == $"{className}Id")
@@ -172,6 +198,5 @@ namespace Misa.Cukcuk.Infrastructure.Repository
             }
         }
 
-        
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Misa.Cukcuk.Core.Exceptions;
 using Misa.Cukcuk.Core.Interface.Infrastructure;
 using Misa.Cukcuk.Core.Interface.Services;
+using Misa.Cukcuk.Infrastructure.Repository;
 
 namespace Misa.Cukcuk.Api.Controllers
 {
@@ -20,13 +21,13 @@ namespace Misa.Cukcuk.Api.Controllers
         /// <summary>
         /// Lấy toàn bộ dữ liệu
         /// </summary>
-        /// <returns>200 - nếu có dữ liệu
+        /// <returns>
+        /// 200 - nếu có dữ liệu
         /// 400 - nếu có lỗi nghiệp vụ
         /// 500 - lỗi exception
         /// </returns>
         /// CREATED BY: PTSON (6/08/2023)
         [HttpGet]
-
         public IActionResult Get()
         {
             try
@@ -56,7 +57,15 @@ namespace Misa.Cukcuk.Api.Controllers
             }
 
         }
-
+        /// <summary>
+        /// Lấy dữ liệu theo id
+        /// </summary>
+        /// <returns>
+        /// 200 - nếu có dữ liệu
+        /// 400 - nếu có lỗi nghiệp vụ
+        /// 500 - lỗi exception
+        /// </returns>
+        /// CREATED BY: PTSON (6/08/2023)
         [HttpGet("{entityId}")]
         public IActionResult GetById(Guid entityId)
         {
@@ -86,7 +95,15 @@ namespace Misa.Cukcuk.Api.Controllers
                 return StatusCode(500, response);
             }
         }
-
+        /// <summary>
+        /// Thêm mới dữ liệu
+        /// </summary>
+        /// <returns>
+        /// 200 - nếu có dữ liệu
+        /// 400 - nếu có lỗi nghiệp vụ
+        /// 500 - lỗi exception
+        /// </returns>
+        /// CREATED BY: PTSON (6/08/2023)
         [HttpPost]
         public IActionResult Post(MISAEntity entity)
         {
@@ -116,7 +133,15 @@ namespace Misa.Cukcuk.Api.Controllers
                 return StatusCode(500, response);
             }
         }
-
+        /// <summary>
+        /// Câp nhật dữ liệu
+        /// </summary>
+        /// <returns>
+        /// 200 - nếu có dữ liệu
+        /// 400 - nếu có lỗi nghiệp vụ
+        /// 500 - lỗi exception
+        /// </returns>
+        /// CREATED BY: PTSON (6/08/2023)
         [HttpPut("{entityId}")]
         public IActionResult Put(MISAEntity entity, Guid entityId)
         {
@@ -146,7 +171,15 @@ namespace Misa.Cukcuk.Api.Controllers
                 return StatusCode(500, response);
             }
         }
-
+        /// <summary>
+        /// Xóa dữ liệu
+        /// </summary>
+        /// <returns>
+        /// 200 - nếu có dữ liệu
+        /// 400 - nếu có lỗi nghiệp vụ
+        /// 500 - lỗi exception
+        /// </returns>
+        /// CREATED BY: PTSON (6/08/2023)
         [HttpDelete("{entityId}")]
         public IActionResult Delete(Guid entityId)
         {

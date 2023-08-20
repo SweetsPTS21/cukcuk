@@ -21,7 +21,7 @@
 }
 
 .m-select-box-icon {
-    height: 100%;
+    height: 40px;
     position: absolute;
     right: 0;
     font-size: 16px;
@@ -34,4 +34,109 @@
 
 .m-box-custom {
     appearance: none;
+}
+
+.item-input {
+    display: flex;
+    position: relative;
+}
+
+.select-item {
+    position: relative;
+    display: block;
+}
+.select-btn,
+.options li {
+    display: flex;
+    cursor: pointer;
+    align-self: center;
+}
+.select-btn {
+    width: 166px;
+    height: 38px;
+    padding: 0 16px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    background-color: #fff;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.select-btn:hover,
+.select-btn:focus {
+    outline: none;
+    border: 1px solid #019160;
+}
+
+.select-btn i {
+    font-size: 20px;
+    transition: transform 0.2s linear;
+}
+
+.select-item.active .select-btn i {
+    transform: rotate(180deg);
+}
+
+.select-item.active .content {
+    display: block;
+}
+
+.content {
+    position: absolute;
+    width: 200px;
+    display: none;
+    padding: 16px 0;
+    margin-top: 10px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: #999898 1px 2px 5px 0px;
+    transform: translateZ(100);
+    z-index: 100;
+}
+
+.content .options {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.content .options::-webkit-scrollbar {
+    width: 5px;
+}
+
+.content .options::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.content .options::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+.content .options::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.options li {
+    height: 40px;
+    padding-left: 36px;
+    padding-right: 16px;
+    align-items: center;
+}
+
+.options li.selected {
+    background-image: url("../../assets/icon/tick.png");
+    background-position: 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    padding-left: 40px;
+    padding-right: 16px;
+}
+
+.options li:hover {
+    background-color: #019160;
+    color: #fff;
 }

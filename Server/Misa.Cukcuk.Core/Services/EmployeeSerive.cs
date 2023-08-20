@@ -17,7 +17,13 @@ namespace Misa.Cukcuk.Core.Services
         {
             _employeeRepository = employeeRepository;
         }
-
+        /// <summary>
+        /// Check trùng mã nhân viên
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <param name="employeeId"></param>
+        /// <exception cref="ValidateException"></exception>
+        /// CREATED BY: PTSON (01/08/2023)
         protected override void CheckDuplicateEmployeeCode(Employee employee, Guid employeeId)
         {
             if (employee != null)

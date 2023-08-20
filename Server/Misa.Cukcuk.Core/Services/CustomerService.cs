@@ -20,6 +20,12 @@ namespace Misa.Cukcuk.Core.Services
             _customerRepository = customerRepository;
         }
 
+        /// <summary>
+        /// Service cập nhật nhiều khách hàng
+        /// </summary>
+        /// <param name="customerIds"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public int UpdateMultipleService(List<Guid> customerIds)
         {
             ///Thực hiện validate dữ liệu khách hàng
