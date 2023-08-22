@@ -23,16 +23,18 @@
                     <MISASelect
                         v-model="filterObj.DepartmentId"
                         :options="departmentList"
-                        displayProp="DepartmentName"
-                        valueProp="DepartmentId"
+                        display-prop="DepartmentName"
+                        value-prop="DepartmentId"
+                        find-all="true"
                     ></MISASelect>
                 </div>
                 <div class="m-page-toolbar-item">
                     <MISASelect
                         v-model="filterObj.PositionId"
                         :options="positionList"
-                        displayProp="PositionName"
-                        valueProp="PositionId"
+                        display-prop="PositionName"
+                        value-prop="PositionId"
+                        find-all="true"
                     ></MISASelect>
                 </div>
             </div>
@@ -229,17 +231,13 @@
                     <button class="m-btn-last"></button>
                 </div>
                 <div class="m-paging-right">
-                    <select
-                        class="m-select-box m-box-custom"
+                    <MISASelect
                         v-model="filterObj.PageSize"
-                    >
-                        <option value="10">10 nhân viên/trang</option>
-                        <option value="20">20 nhân viên/trang</option>
-                        <option value="50">50 nhân viên/trang</option>
-                    </select>
-                    <div class="m-select-box-icon">
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
+                        :options="pagingList"
+                        display-prop="Name"
+                        value-prop="Value"
+                        find-all="false"
+                    ></MISASelect>
                 </div>
             </div>
         </div>
@@ -416,7 +414,29 @@ export default {
                     this.departmentList = res.data;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    this.isLoading = false;
+                    if (err.code === "ERR_NETWORK") {
+                        this.showToast(
+                            this.language.STATUS_CODE.INTERNAL_SERVER,
+                            Enum.TOAST_TYPE.ERROR
+                        );
+                        return;
+                    } else {
+                        let response = err.response;
+                        switch (response.status) {
+                            case 400:
+                                var userMsg = err.response.data["userMsg"];
+                                this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                                break;
+                            case 500:
+                                var userMsg = err.response.data["userMsg"];
+                                this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                                break;
+                            default:
+                                break;
+                        }
+                        console.log(userMsg);
+                    }
                 });
         },
         /**
@@ -430,20 +450,29 @@ export default {
                     this.positionList = res.data;
                 })
                 .catch((err) => {
-                    let response = err.response;
-                    switch (response.status) {
-                        case 400:
-                            var userMsg = err.response.data["userMsg"];
-                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
-                            break;
-                        case 500:
-                            var userMsg = err.response.data["userMsg"];
-                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
-                            break;
-                        default:
-                            break;
+                    this.isLoading = false;
+                    if (err.code === "ERR_NETWORK") {
+                        this.showToast(
+                            this.language.STATUS_CODE.INTERNAL_SERVER,
+                            Enum.TOAST_TYPE.ERROR
+                        );
+                        return;
+                    } else {
+                        let response = err.response;
+                        switch (response.status) {
+                            case 400:
+                                var userMsg = err.response.data["userMsg"];
+                                this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                                break;
+                            case 500:
+                                var userMsg = err.response.data["userMsg"];
+                                this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                                break;
+                            default:
+                                break;
+                        }
+                        console.log(userMsg);
                     }
-                    console.log(userMsg);
                 });
         },
         /**
@@ -463,20 +492,29 @@ export default {
                     this.isLoading = false;
                 })
                 .catch((err) => {
-                    let response = err.response;
-                    switch (response.status) {
-                        case 400:
-                            var userMsg = err.response.data["userMsg"];
-                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
-                            break;
-                        case 500:
-                            var userMsg = err.response.data["userMsg"];
-                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
-                            break;
-                        default:
-                            break;
+                    this.isLoading = false;
+                    if (err.code === "ERR_NETWORK") {
+                        this.showToast(
+                            this.language.STATUS_CODE.INTERNAL_SERVER,
+                            Enum.TOAST_TYPE.ERROR
+                        );
+                        return;
+                    } else {
+                        let response = err.response;
+                        switch (response.status) {
+                            case 400:
+                                var userMsg = err.response.data["userMsg"];
+                                this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                                break;
+                            case 500:
+                                var userMsg = err.response.data["userMsg"];
+                                this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
+                                break;
+                            default:
+                                break;
+                        }
+                        console.log(userMsg);
                     }
-                    console.log(userMsg);
                 });
         },
         loadData() {
@@ -490,6 +528,15 @@ export default {
                     this.isLoading = false;
                 })
                 .catch((err) => {
+                    this.isLoading = false;
+                    if (err.code === "ERR_NETWORK") {
+                        this.showToast(
+                            this.language.STATUS_CODE.INTERNAL_SERVER,
+                            Enum.TOAST_TYPE.ERROR
+                        );
+                        console.log(err.message);
+                        return;
+                    }
                     let response = err.response;
                     switch (response.status) {
                         case 400:
@@ -498,10 +545,7 @@ export default {
                             break;
                         case 500:
                             var userMsg = err.response.data["userMsg"];
-                            this.showToast(
-                                this.language.STATUS_CODE.INTERNAL_SERVER,
-                                Enum.TOAST_TYPE.ERROR
-                            );
+                            this.showToast(userMsg, Enum.TOAST_TYPE.ERROR);
                             break;
                         default:
                             break;
@@ -589,6 +633,7 @@ export default {
             employeeList: [],
             departmentList: [],
             positionList: [],
+            pagingList: [...Default.PAGING],
             isShowDialog: false,
             employeeSelectedId: null,
             employeeSelected: {},

@@ -35,6 +35,11 @@ const Default = {
         { Name: language.WORK_STATUS.INTERN, Value: Enum.WORK_STATUS.INTERN },
         { Name: language.WORK_STATUS.RETIRED, Value: Enum.WORK_STATUS.RETIRED },
     ],
+    PAGING: [
+        { Value: 10, Name: "10 nhân viên/trang" },
+        { Value: 20, Name: "20 nhân viên/trang" },
+        { Value: 50, Name: "50 nhân viên/trang" },
+    ],
     Filter: {
         PageSize: 10,
         Page: 1,

@@ -62,8 +62,9 @@
                             <MISASelect
                                 v-model="employee.Gender"
                                 :options="genderList"
-                                displayProp="Name"
-                                valueProp="Value"
+                                display-prop="Name"
+                                value-prop="Value"
+                                find-all="true"
                             ></MISASelect>
                         </div>
                         <div class="info-item">
@@ -140,8 +141,9 @@
                             <MISASelect
                                 v-model="employee.PositionId"
                                 :options="positionList"
-                                displayProp="PositionName"
-                                valueProp="PositionId"
+                                display-prop="PositionName"
+                                value-prop="PositionId"
+                                find-all="true"
                             ></MISASelect>
                         </div>
                         <div class="info-item">
@@ -149,8 +151,9 @@
                             <MISASelect
                                 v-model="employee.DepartmentId"
                                 :options="departmentList"
-                                displayProp="DepartmentName"
-                                valueProp="DepartmentId"
+                                display-prop="DepartmentName"
+                                value-prop="DepartmentId"
+                                find-all="true"
                             ></MISASelect>
                         </div>
                         <div class="info-item">
@@ -186,8 +189,9 @@
                             <MISASelect
                                 v-model="employee.WorkStatus"
                                 :options="workStatusList"
-                                displayProp="Name"
-                                valueProp="Value"
+                                display-prop="Name"
+                                value-prop="Value"
+                                find-all="true"
                             ></MISASelect>
                         </div>
                     </div>

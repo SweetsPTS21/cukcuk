@@ -12,7 +12,9 @@
         </div>
         <div class="content">
             <ul class="options">
-                <li @click="$emit('update:modelValue', '')">Tất cả</li>
+                <li v-if="findAll" @click="$emit('update:modelValue', '')">
+                    Tất cả
+                </li>
                 <li
                     v-for="option in options"
                     :value="option[valueProp]"
@@ -30,7 +32,8 @@ export default {
     created() {
         this.bindData();
     },
-    props: ["modelValue", "options", "displayProp", "valueProp"],
+    props: ["modelValue", "options", "displayProp", "valueProp", "findAll"],
+    emits: ["update:modelValue"],
     watch: {
         modelValue: function (val) {
             this.bindData();
