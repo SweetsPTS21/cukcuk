@@ -162,7 +162,7 @@
                                 type="text"
                                 class="m-input m-modal-input"
                                 placeholder="Nhập mã số thuế cá nhân"
-                                v-model="employee.PersonalTaxCode"
+                                v-model="employee.TaxCode"
                             />
                         </div>
                         <div class="info-item">

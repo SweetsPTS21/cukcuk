@@ -44,9 +44,10 @@ const Default = {
         PageSize: 10,
         Page: 1,
         TotalPage: 3,
+        TotalRecord: 100,
         Search: "",
-        DepartmentId: null,
-        PositionId: null,
+        DepartmentId: "",
+        PositionId: "",
     },
 };
 

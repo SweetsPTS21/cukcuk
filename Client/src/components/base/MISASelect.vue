@@ -41,9 +41,6 @@ export default {
             if (typeof val === "string" && val != "" && !isNaN(val)) {
                 this.$emit("update:modelValue", Number(val));
             }
-            if (val == "") {
-                this.$emit("update:modelValue", null);
-            }
         },
     },
     methods: {
@@ -64,6 +61,9 @@ export default {
             );
             if (value) {
                 this.selectedValue = value[this.displayProp];
+            }
+            else {
+                this.selectedValue = "Tất cả";
             }
         },
     },

@@ -21,7 +21,7 @@ namespace Misa.Cukcuk.Core.Interface.Infrastructure
         /// <param name="filterObj"></param>
         /// <returns></returns>
         /// CREATED BY: PTSON (03/08/2023)
-        IEnumerable<Employee> GetWithFilter(FilterObj filterObj);
+        IEnumerable<Employee> GetWithFilter(int pageIndex, int pageSize, string? search, string? departmentId, string? positionId);
         /// <summary>
         /// Kiểm tra trùng mã nhân viên khi thêm mới
         /// </summary>

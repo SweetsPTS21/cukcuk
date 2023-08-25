@@ -188,9 +188,17 @@
                 </tbody>
             </table>
             <div class="m-paging">
-                <div class="m-paging-left">Hiển thị 1-10 nhân viên</div>
+                <div class="m-paging-left">
+                    Hiển thị
+                    {{ (this.filterObj.Page - 1) * this.filterObj.PageSize }} -
+                    {{ this.filterObj.Page * this.filterObj.PageSize }} nhân
+                    viên
+                </div>
                 <div class="m-paging-center">
-                    <button class="m-btn-first"></button>
+                    <button
+                        class="m-btn-first"
+                        @click="pageOnClick(1)"
+                    ></button>
                     <button
                         class="m-btn-prev"
                         @click="pageOnClick(this.filterObj.Page - 1)"
@@ -201,34 +209,54 @@
                             :class="{
                                 'm-page-number-selected': filterObj.Page == 1,
                             }"
-                            @click="pageOnClick(1)"
+                            @click="
+                                pageOnClick(
+                                    this.filterObj.Page > 1
+                                        ? filterObj.Page - 1
+                                        : 1
+                                )
+                            "
                         >
-                            1
+                            {{
+                                this.filterObj.Page > 1 ? filterObj.Page - 1 : 1
+                            }}
                         </button>
                         <button
                             class="m-page-number m-page-2"
                             :class="{
-                                'm-page-number-selected': filterObj.Page == 2,
+                                'm-page-number-selected': filterObj.Page > 1,
                             }"
-                            @click="pageOnClick(2)"
+                            @click="
+                                pageOnClick(
+                                    this.filterObj.Page > 1 ? filterObj.Page : 2
+                                )
+                            "
                         >
-                            2
+                            {{ this.filterObj.Page > 1 ? filterObj.Page : 2 }}
                         </button>
                         <button
                             class="m-page-number m-page-3"
-                            :class="{
-                                'm-page-number-selected': filterObj.Page == 3,
-                            }"
-                            @click="pageOnClick(3)"
+                            @click="
+                                pageOnClick(
+                                    this.filterObj.Page > 1
+                                        ? filterObj.Page + 1
+                                        : 3
+                                )
+                            "
                         >
-                            3
+                            {{
+                                this.filterObj.Page > 1 ? filterObj.Page + 1 : 3
+                            }}
                         </button>
                     </div>
                     <button
                         class="m-btn-next"
                         @click="pageOnClick(this.filterObj.Page + 1)"
                     ></button>
-                    <button class="m-btn-last"></button>
+                    <button
+                        class="m-btn-last"
+                        @click="pageOnClick(this.filterObj.TotalPage)"
+                    ></button>
                 </div>
                 <div class="m-paging-right">
                     <MISASelect
@@ -483,12 +511,14 @@ export default {
         filterData() {
             this.isLoading = true;
             axios
-                .post(
-                    `https://localhost:7159/api/v1/Employee/filter`,
-                    this.filterObj
+                .get(
+                    `https://localhost:7159/api/v1/Employee/filter?pageIndex=${this.filterObj.Page}&pageSize=${this.filterObj.PageSize}&search=${this.filterObj.Search}&departmentId=${this.filterObj.DepartmentId}&positionId=${this.filterObj.PositionId}`
                 )
                 .then((res) => {
-                    this.employeeList = res.data;
+                    this.employeeList = res.data.data;
+                    this.filterObj.TotalPage = res.data.totalPage;
+                    this.filterObj.TotalRecord = res.data.totalRecord;
+                    this.filterObj.Page = res.data.pageIndex;
                     this.isLoading = false;
                 })
                 .catch((err) => {

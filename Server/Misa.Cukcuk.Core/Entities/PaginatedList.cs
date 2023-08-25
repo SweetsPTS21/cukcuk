@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Misa.Cukcuk.Core.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,9 +56,21 @@ namespace Misa.Cukcuk.Core.Entities
         /// CREATED BY: PTSON (03/08/2023)
         public static PaginatedList<T> Create(IEnumerable<T> source, int pageIndex, int pageSize)
         {
-            var count = source.Count();
-            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            return new PaginatedList<T>(items, count, pageIndex, pageSize);
+            try
+            {
+                var count = source.Count();
+                var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                return new PaginatedList<T>(items, count, pageIndex, pageSize);
+            }
+            catch (ValidateException e)
+            {
+                throw new ValidateException(e.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }

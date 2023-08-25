@@ -81,19 +81,37 @@ namespace Misa.Cukcuk.Api.Controllers
         /// 500 - lỗi exception
         /// </returns>
         /// CREATED BY: PTSON (6/08/2023)
-        [HttpPost("filter")]
-        public IActionResult GetEmployee(FilterObj filterObj)
+        [HttpGet("filter")]
+        public IActionResult GetEmployee(int pageIndex, int pageSize, string? search, string? departmentId, string? positionId)
         {
             try
             {
-                var data = _employeeRepository.GetWithFilter(filterObj);
+                var data = _employeeRepository.GetWithFilter(pageIndex, pageSize, search, departmentId, positionId);
+                var totalRecord = data.Count();
+                var totalPage = (int)Math.Ceiling((double)totalRecord / pageSize);
+                pageIndex = pageIndex > totalPage ? totalPage : pageIndex;
 
+                #region Paging
+                data = PaginatedList<Employee>.Create(data.AsQueryable(), pageIndex, pageSize);
+                #endregion
+
+                #region Lấy tên phòng ban và chức vụ
                 foreach (var item in data)
                 {
                     item.PositionName = _employeeRepository.GetPositionName(item.PositionId);
                     item.DepartmentName = _employeeRepository.GetDepartmentName(item.DepartmentId);
                 }
-                return Ok(data);
+                #endregion
+
+                var response = new
+                {
+                    totalRecord,
+                    totalPage,
+                    pageSize,
+                    pageIndex,
+                    data,
+                };
+                return Ok(response);
             }
             catch (ValidateException e)
             {

@@ -7,6 +7,7 @@ using System;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using System.IO;
+using Misa.Cukcuk.Core.Exceptions;
 
 namespace Misa.Cukcuk.Infrastructure.Repository
 {
@@ -25,22 +26,32 @@ namespace Misa.Cukcuk.Infrastructure.Repository
         /// employees: danh sách nhân viên
         /// </returns>
         /// CREATED BY: PTSON (01/08/2023)
-        public IEnumerable<Employee> GetWithFilter(FilterObj filterObj)
+        public IEnumerable<Employee> GetWithFilter(int pageIndex, int pageSize, string? search, string? departmentId, string? positionId)
         {
-            var key = filterObj.Search;
-            var pid = filterObj.PositionId != null ? filterObj.PositionId : "";
-            var did = filterObj.DepartmentId != null ? filterObj.DepartmentId : "";
-
-            var sql = $"SELECT * FROM employee WHERE (EmployeeCode LIKE \"%{key}%\" " +
-                $"OR FullName LIKE \"%{key}%\" OR PhoneNumber LIKE \"%{key}%\") " +
-                $"AND (PositionId LIKE \"%{pid}%\" OR PositionId IS NULL) AND (DepartmentId LIKE \"%{did}%\" OR DepartmentId IS NULL)";
-            using(MySqlConnection = new MySqlConnection(ConnectionString))
+            try
             {
-                var employees = MySqlConnection.Query<Employee>(sql);
+                var key = search;
+                var pid = positionId != null ? positionId : "";
+                var did = departmentId != null ? departmentId : "";
 
-                employees = PaginatedList<Employee>.Create(employees.AsQueryable(), filterObj.Page, filterObj.PageSize);
-                return employees;
+                var sql = $"SELECT * FROM employee WHERE (EmployeeCode LIKE \"%{key}%\" " +
+                    $"OR FullName LIKE \"%{key}%\" OR PhoneNumber LIKE \"%{key}%\") " +
+                    $"AND (PositionId LIKE \"%{pid}%\" OR PositionId IS NULL) AND (DepartmentId LIKE \"%{did}%\" OR DepartmentId IS NULL)";
+                using (MySqlConnection = new MySqlConnection(ConnectionString))
+                {
+                    var employees = MySqlConnection.Query<Employee>(sql);
+                    return employees;
+                }
             }
+            catch (ValidateException e)
+            {
+                throw new ValidateException(e.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
         /// <summary>
         /// Lấy dữ liệu phân trang
@@ -53,12 +64,24 @@ namespace Misa.Cukcuk.Infrastructure.Repository
         /// CREATED BY: PTSON (01/08/2023)
         public IEnumerable<Employee> GetPaging(int pageSize, int pageIndex)
         {
-            var sql = $"select * from employee limit {pageSize} offset {pageIndex}";
-            using (MySqlConnection = new MySqlConnection(ConnectionString))
+            try
             {
-                var employees = MySqlConnection.Query<Employee>(sql);
-                return employees;
+                var sql = $"select * from employee limit {pageSize} offset {pageIndex}";
+                using (MySqlConnection = new MySqlConnection(ConnectionString))
+                {
+                    var employees = MySqlConnection.Query<Employee>(sql);
+                    return employees;
+                }
             }
+            catch (ValidateException e)
+            {             
+                throw new ValidateException(e.Message);
+            }
+            catch (Exception ex)
+            {               
+                throw new Exception(ex.Message);
+            }
+
         }
         /// <summary>
         /// Check trùng mã nhân viên
@@ -150,5 +173,6 @@ namespace Misa.Cukcuk.Infrastructure.Repository
                 return newEmployeeCode;
             }
         }
+
     }
 }
